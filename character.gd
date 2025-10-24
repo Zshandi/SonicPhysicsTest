@@ -10,6 +10,7 @@ var acceleration_scale := framerate * framerate * scaling_factor
 var top_speed := 6 * speed_scale
 
 var jump_speed := 6.5 * speed_scale
+var jump_stop_speed := 4 * speed_scale
 
 var air_acceleration := 0.09375 * acceleration_scale
 
@@ -20,6 +21,7 @@ var top_falling_speed := 16 * speed_scale
 
 var ground_speed := 0.0
 var is_on_ground := false
+var is_jumping := false
 
 func _physics_process(delta: float) -> void:
     var is_left_pressed := Input.is_action_pressed("ui_left")
@@ -34,6 +36,9 @@ func _physics_process(delta: float) -> void:
         if is_jump_pressed:
             velocity.x -= jump_speed * sin(deg_to_rad(ground_angle));
             velocity.y -= jump_speed * cos(deg_to_rad(ground_angle));
+            is_jumping = true
+        else:
+            is_jumping = false
         # TODO: Ground movement
     else:
         # Movement
@@ -46,6 +51,10 @@ func _physics_process(delta: float) -> void:
             if velocity.x > top_speed:
                 velocity.x = top_speed
 
+        # Variable jump height
+        if is_jumping and not is_jump_pressed:
+            if velocity.y < -jump_stop_speed:
+                velocity.y = - jump_stop_speed
         # Drag factor
         # if velocity.y < 0 && velocity.y > -4:
         #     velocity.x -= (velocity.x / 256); # May need to update to use "div"?
