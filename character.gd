@@ -9,9 +9,9 @@ var acceleration_scale := framerate * framerate * scaling_factor
 
 var top_speed := 6 * speed_scale
 
-var jump_force = 6.5 * speed_scale
+var jump_speed := 6.5 * speed_scale
 
-var air_acceleration_speed := 0.09375 * acceleration_scale
+var air_acceleration := 0.09375 * acceleration_scale
 
 var gravity_force := 0.21875 * acceleration_scale
 var top_falling_speed := 16 * speed_scale
@@ -32,17 +32,17 @@ func _physics_process(delta: float) -> void:
         var ground_angle = 0 # TODO Calculate ground angle in degrees
 
         if is_jump_pressed:
-            velocity.x -= jump_force * sin(deg_to_rad(ground_angle));
-            velocity.y -= jump_force * cos(deg_to_rad(ground_angle));
+            velocity.x -= jump_speed * sin(deg_to_rad(ground_angle));
+            velocity.y -= jump_speed * cos(deg_to_rad(ground_angle));
         # TODO: Ground movement
     else:
         # Movement
         if is_left_pressed:
-            velocity.x -= air_acceleration_speed * delta
+            velocity.x -= air_acceleration * delta
             if velocity.x < -top_speed:
                 velocity.x = - top_speed
         if is_right_pressed:
-            velocity.x += air_acceleration_speed * delta
+            velocity.x += air_acceleration * delta
             if velocity.x > top_speed:
                 velocity.x = top_speed
 
