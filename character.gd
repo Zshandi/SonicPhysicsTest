@@ -59,6 +59,7 @@ func _physics_process(delta: float) -> void:
         velocity.x -= jump_speed * sin(deg_to_rad(ground_angle));
         velocity.y -= jump_speed * cos(deg_to_rad(ground_angle));
         is_jumping = true
+        is_on_ground = false
 
     elif is_on_ground:
         is_jumping = false
@@ -118,7 +119,7 @@ func _physics_process(delta: float) -> void:
         var total_normal = Vector2.ZERO
         var total_normal_count = 0
         for sensor in ground_sensors:
-            if sensor.is_colliding() and sensor.get_collision_depth() < 10:
+            if sensor.is_colliding() and sensor.get_collision_depth() < 30:
                 is_on_ground = true
                 total_normal += sensor.get_collision_normal()
                 total_normal_count += 1
@@ -164,7 +165,7 @@ func _process(_delta: float) -> void:
     $SanicStanding.scale.x = abs($SanicStanding.scale.x) * facing_dir_scale
 
 func _update_for_ground_angle():
-    # if not is_on_ground:
-    #     ground_angle = 0
+    if not is_on_ground:
+        ground_angle = 0
     up_direction = Vector2.UP.rotated(deg_to_rad(ground_angle))
     rotation_degrees = - ground_angle
