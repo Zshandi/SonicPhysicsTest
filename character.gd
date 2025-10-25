@@ -124,6 +124,7 @@ func _physics_process(delta: float) -> void:
     DebugValues.debug("ground_speed", ground_speed)
     DebugValues.debug("ground_angle", ground_angle)
     DebugValues.debug("is_on_ground", is_on_ground)
+    DebugValues.debug("velocity", velocity)
 
 
 func _process(_delta: float) -> void:

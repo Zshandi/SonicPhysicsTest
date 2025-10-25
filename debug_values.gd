@@ -9,6 +9,11 @@ func _ready() -> void:
     instance = self
 
 func _process(_delta: float) -> void:
+    if Input.is_action_just_pressed("debug_toggle"):
+        if visible:
+            hide()
+        else:
+            show()
     rewrite_text()
 
 func rewrite_text() -> void:
