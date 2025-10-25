@@ -131,17 +131,14 @@ func _physics_process(delta: float) -> void:
         if total_normal_count > 0:
             var avg_normal = total_normal / total_normal_count
             ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
+            if ground_angle < 0:
+                ground_angle += 360
             
             DebugValues.debug("avg_normal", avg_normal)
-            
     
     if is_on_ground:
-        # Calculate new ground angle if on ground
-        # var last_collision := get_slide_collision_count() - 1
-        # if last_collision >= 0:
-        #     # May need to revamp this
-        #     var collision_angle = get_slide_collision(last_collision).get_angle()
-        #     ground_angle = rad_to_deg(collision_angle)
+        _snap_downward()
+
         if not was_on_ground:
             # If we just landed, calculate the ground speed from the velocity
             ground_speed = velocity.length()
@@ -152,7 +149,6 @@ func _physics_process(delta: float) -> void:
     DebugValues.debug("ground_angle", ground_angle)
     DebugValues.debug("is_on_ground", is_on_ground)
     DebugValues.debug("velocity", velocity)
-
 
 func _process(_delta: float) -> void:
     if is_jumping:
@@ -169,3 +165,10 @@ func _update_for_ground_angle():
         ground_angle = 0
     up_direction = Vector2.UP.rotated(deg_to_rad(ground_angle))
     rotation_degrees = - ground_angle
+
+func _snap_downward():
+    var distance_to_snap := 1000
+    var direction := Vector2.DOWN.rotated(rotation)
+    var snap_velocity := direction * distance_to_snap
+    
+    move_and_collide(snap_velocity)
