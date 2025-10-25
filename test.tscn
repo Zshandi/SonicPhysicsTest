@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://k3i7kvw0on2b"]
+[gd_scene load_steps=4 format=3 uid="uid://k3i7kvw0on2b"]
 
 [ext_resource type="PackedScene" uid="uid://t4vrk47fmr35" path="res://character.tscn" id="1_37kl0"]
+[ext_resource type="Script" uid="uid://c7bjgsb7wh8ye" path="res://debug_values.gd" id="2_8uh7m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mf4mk"]
 size = Vector2(570.5, 37)
@@ -21,3 +22,17 @@ shape = SubResource("RectangleShape2D_mf4mk")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground"]
 position = Vector2(12, 37)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 962, 155, 960, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+
+[node name="DebugOverlay" type="CanvasLayer" parent="."]
+
+[node name="DebugValues" type="RichTextLabel" parent="DebugOverlay"]
+offset_left = 17.0
+offset_top = 14.0
+offset_right = 1028.0
+offset_bottom = 566.0
+text = "Key: value
+Key: value
+Key: value
+Key: value
+Key: value"
+script = ExtResource("2_8uh7m")
