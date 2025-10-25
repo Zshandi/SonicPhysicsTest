@@ -50,9 +50,6 @@ var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 func _physics_process(delta: float) -> void:
     _update_ground_stuff(delta)
 
-    var current_position3 := global_position
-    if current_position3.y > 1000:
-        current_position3 = global_position
     var is_left_pressed := Input.is_action_pressed("ui_left")
     var is_right_pressed := Input.is_action_pressed("ui_right")
     var is_jump_pressed := Input.is_action_pressed("ui_accept")
@@ -119,17 +116,8 @@ func _physics_process(delta: float) -> void:
         if velocity.y > top_falling_speed:
             velocity.y = top_falling_speed
     
-    var current_position2 := global_position
-    if current_position2.y > 1000:
-        current_position2 = global_position
     _update_for_ground_angle()
-    var current_position := global_position
-    if current_position.y > 1000:
-        current_position = global_position
     move_and_slide()
-    var new_position := global_position
-    if new_position.y > 1000:
-        new_position = global_position
 
 
 func _update_ground_stuff(_delta: float):
@@ -158,11 +146,6 @@ func _update_ground_stuff(_delta: float):
                 ground_angle += 360
             
             DebugValues.debug("avg_normal", avg_normal)
-
-        var m_velocity = velocity
-        var m_position = global_position
-        if total_normal_count == 0:
-            is_on_ground = is_on_ground
     
     _update_for_ground_angle()
     if is_on_ground:
@@ -180,9 +163,6 @@ func _update_ground_stuff(_delta: float):
     DebugValues.debug("is_on_ground", is_on_ground)
     DebugValues.debug("velocity", velocity)
     DebugValues.debug("global_position", global_position)
-    var current_position3 = global_position
-    if current_position3.y > 1000:
-        current_position3 = global_position
 
 func _process(_delta: float) -> void:
     if is_jumping:
@@ -204,11 +184,5 @@ func _snap_downward():
     var distance_to_snap := 1000
     var direction := Vector2.DOWN.rotated(rotation)
     var snap_velocity := direction * distance_to_snap
-    
-    var current_position := global_position
 
-    var collision = move_and_collide(snap_velocity)
-    
-    var new_position := global_position
-    if new_position.y > 1000:
-        collision = collision
+    move_and_collide(snap_velocity)
