@@ -112,7 +112,8 @@ func _physics_process(delta: float) -> void:
         var last_collision := get_slide_collision_count() - 1
         if last_collision >= 0:
             # May need to revamp this
-            ground_angle = rad_to_deg(get_slide_collision(last_collision).get_angle())
+            var collision_angle = get_slide_collision(last_collision).get_angle()
+            ground_angle = rad_to_deg(collision_angle)
 
         if not was_on_ground:
             # If we just landed, calculate the ground speed from the velocity
@@ -122,6 +123,7 @@ func _physics_process(delta: float) -> void:
     
     DebugValues.debug("ground_speed", ground_speed)
     DebugValues.debug("ground_angle", ground_angle)
+    DebugValues.debug("is_on_ground", is_on_ground)
 
 
 func _process(_delta: float) -> void:
@@ -135,7 +137,7 @@ func _process(_delta: float) -> void:
     $SanicStanding.scale.x = abs($SanicStanding.scale.x) * facing_dir_scale
 
 func _update_for_ground_angle():
-    if not is_on_ground:
-        ground_angle = 0
-    up_direction = Vector2.UP.rotated(deg_to_rad(-ground_angle))
-    rotation_degrees = ground_angle
+    # if not is_on_ground:
+    #     ground_angle = 0
+    up_direction = Vector2.UP.rotated(deg_to_rad(ground_angle))
+    rotation_degrees = - ground_angle
