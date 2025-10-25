@@ -101,6 +101,7 @@ func _physics_process(delta: float) -> void:
         if velocity.y > top_falling_speed:
             velocity.y = top_falling_speed
     
+    _update_for_ground_angle()
     move_and_slide()
 
     var was_on_ground = is_on_ground
@@ -128,3 +129,9 @@ func _process(_delta: float) -> void:
         $SanicBall.hide()
     
     $SanicStanding.scale.x = abs($SanicStanding.scale.x) * facing_dir_scale
+
+func _update_for_ground_angle():
+    if not is_on_ground:
+        ground_angle = 0
+    up_direction = Vector2.UP.rotated(ground_angle)
+    rotation_degrees = ground_angle
