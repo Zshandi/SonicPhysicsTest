@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+# Constant factors
+
 var framerate := 60
 var scaling_factor := 1.5
 var speed_scale := framerate * scaling_factor
@@ -20,11 +22,12 @@ var slope_factor_normal = 0.125
 var slope_factor_rollup = 0.078125
 var slope_factor_rolldown = 0.3125
 
-
 var air_acceleration := 0.09375 * acceleration_scale
 
 var gravity_force := 0.21875 * acceleration_scale
 var top_falling_speed := 16 * speed_scale
+
+var ground_distance := 5
 
 # State variables
 
@@ -34,6 +37,9 @@ var is_on_ground := false
 var is_jumping := false
 
 var facing_dir_scale := 1
+
+@onready
+var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
 func _physics_process(delta: float) -> void:
     var is_left_pressed := Input.is_action_pressed("ui_left")
@@ -105,16 +111,36 @@ func _physics_process(delta: float) -> void:
     move_and_slide()
 
     var was_on_ground = is_on_ground
+
     is_on_ground = is_on_floor()
 
+    if was_on_ground or is_on_ground:
+        var total_normal = Vector2.ZERO
+        var total_normal_count = 0
+        for sensor in ground_sensors:
+            if sensor.is_colliding() and sensor.get_collision_depth() < 10:
+                is_on_ground = true
+                total_normal += sensor.get_collision_normal()
+                total_normal_count += 1
+        
+        DebugValues.debug("total_normal_count", total_normal_count)
+        DebugValues.debug("total_normal", total_normal)
+        DebugValues.debug("avg_normal", 0)
+        
+        if total_normal_count > 0:
+            var avg_normal = total_normal / total_normal_count
+            ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
+            
+            DebugValues.debug("avg_normal", avg_normal)
+            
+    
     if is_on_ground:
         # Calculate new ground angle if on ground
-        var last_collision := get_slide_collision_count() - 1
-        if last_collision >= 0:
-            # May need to revamp this
-            var collision_angle = get_slide_collision(last_collision).get_angle()
-            ground_angle = rad_to_deg(collision_angle)
-
+        # var last_collision := get_slide_collision_count() - 1
+        # if last_collision >= 0:
+        #     # May need to revamp this
+        #     var collision_angle = get_slide_collision(last_collision).get_angle()
+        #     ground_angle = rad_to_deg(collision_angle)
         if not was_on_ground:
             # If we just landed, calculate the ground speed from the velocity
             ground_speed = velocity.length()
