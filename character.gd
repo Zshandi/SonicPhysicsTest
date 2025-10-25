@@ -48,6 +48,8 @@ var facing_dir_scale := 1
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
 func _physics_process(delta: float) -> void:
+    _update_ground_stuff(delta)
+
     var current_position3 := global_position
     if current_position3.y > 1000:
         current_position3 = global_position
@@ -129,6 +131,8 @@ func _physics_process(delta: float) -> void:
     if new_position.y > 1000:
         new_position = global_position
 
+
+func _update_ground_stuff(_delta: float):
     var was_on_ground = is_on_ground
 
     is_on_ground = is_on_floor()
@@ -162,7 +166,8 @@ func _physics_process(delta: float) -> void:
     
     _update_for_ground_angle()
     if is_on_ground:
-        _snap_downward()
+        if not is_on_floor():
+            _snap_downward()
 
         if not was_on_ground:
             # If we just landed, calculate the ground speed from the velocity
@@ -175,7 +180,7 @@ func _physics_process(delta: float) -> void:
     DebugValues.debug("is_on_ground", is_on_ground)
     DebugValues.debug("velocity", velocity)
     DebugValues.debug("global_position", global_position)
-    current_position3 = global_position
+    var current_position3 = global_position
     if current_position3.y > 1000:
         current_position3 = global_position
 

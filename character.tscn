@@ -28,13 +28,13 @@ texture = ExtResource("3_wa5vi")
 
 [node name="GroundSensor1" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(20, 30)
+position = Vector2(19, 30)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor2" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-20, 30)
+position = Vector2(-19, 30)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
