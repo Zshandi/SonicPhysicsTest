@@ -17,3 +17,7 @@ position = Vector2(511, 292)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground"]
 position = Vector2(507.75, 424.5)
 shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground"]
+position = Vector2(12, 37)
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 962, 155, 960, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
