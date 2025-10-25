@@ -21,10 +21,10 @@ shape = SubResource("RectangleShape2D_mf4mk")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground"]
 position = Vector2(12, 37)
-polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 962, 155, 960, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="World/Ground"]
-position = Vector2(9, 1)
+position = Vector2(-135, -5)
 polygon = PackedVector2Array(225, 442, 225, 409, 8, 260, 10, 441)
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
