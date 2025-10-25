@@ -119,7 +119,7 @@ func _physics_process(delta: float) -> void:
     _update_for_ground_angle()
     move_and_slide()
 
-
+var DEBUG_SENSORS := "SENSORS"
 func _update_ground_stuff(_delta: float):
     var was_on_ground = is_on_ground
 
@@ -134,10 +134,10 @@ func _update_ground_stuff(_delta: float):
                 is_on_ground = true
                 total_normal += sensor.get_collision_normal()
                 total_normal_count += 1
-        
-        DebugValues.debug("total_normal_count", total_normal_count)
-        DebugValues.debug("total_normal", total_normal)
-        DebugValues.debug("avg_normal", 0)
+        DebugValues.category(DEBUG_SENSORS, KEY_S)
+        DebugValues.debug("total_normal_count", total_normal_count, DEBUG_SENSORS)
+        DebugValues.debug("total_normal", total_normal, DEBUG_SENSORS)
+        DebugValues.debug("avg_normal", 0, DEBUG_SENSORS)
         
         if total_normal_count > 0:
             var avg_normal = total_normal / total_normal_count
@@ -145,7 +145,7 @@ func _update_ground_stuff(_delta: float):
             if ground_angle < 0:
                 ground_angle += 360
             
-            DebugValues.debug("avg_normal", avg_normal)
+            DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
     
     _update_for_ground_angle()
     if is_on_ground:
