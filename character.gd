@@ -58,10 +58,14 @@ func _physics_process(delta: float) -> void:
         is_left_pressed = false
         is_right_pressed = false
 
+    var movement_dir = 0
+
     if is_left_pressed:
         facing_dir_scale = -1
+        movement_dir = -1
     elif is_right_pressed:
         facing_dir_scale = 1
+        movement_dir = 1
 
     if is_on_ground and is_jump_pressed:
         velocity.x -= jump_speed * sin(ground_angle_rad);
@@ -72,22 +76,18 @@ func _physics_process(delta: float) -> void:
     elif is_on_ground:
         is_jumping = false
 
-        if is_right_pressed:
-            if sign(ground_speed) >= 0:
-                ground_speed += acceleration_speed * delta
-            else:
-                ground_speed += deceleration_speed * delta
-        
-        elif is_left_pressed:
-            if sign(ground_speed) <= 0:
-                ground_speed -= acceleration_speed * delta
-            else:
-                ground_speed -= deceleration_speed * delta
+        if movement_dir != 0:
+            if sign(movement_dir) != sign(ground_speed):
+                ground_speed += deceleration_speed * delta * movement_dir
+            elif abs(ground_speed) < top_speed:
+                ground_speed += acceleration_speed * delta * movement_dir
+                ground_speed = clamp(ground_speed, -top_speed, top_speed)
         
         else:
             var ground_speed_sign = sign(ground_speed)
             ground_speed -= sign(ground_speed) * friction_speed * delta
             if ground_speed_sign != sign(ground_speed):
+                # We stopped, don't jitter
                 ground_speed = 0
         
         velocity.x = ground_speed * cos(ground_angle_rad)
