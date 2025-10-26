@@ -39,8 +39,23 @@ var ground_angle := 0.0:
         ground_angle = value
         ground_angle_rad = deg_to_rad(value)
 
-var is_movement_grounded := false
-var is_jumping := false
+var is_movement_grounded := false:
+    set(value):
+        is_movement_grounded = value
+        if value and is_jumping: is_jumping = false
+        if not value and is_rolling: is_rolling = false
+        
+var is_rolling := false:
+    set(value):
+        is_rolling = value
+        if value:
+            if not is_movement_grounded: is_movement_grounded = true
+
+var is_jumping := false:
+    set(value):
+        is_jumping = value
+        if value:
+            if is_movement_grounded: is_movement_grounded = false
 
 var facing_dir_scale := 1
 
@@ -71,11 +86,10 @@ func _physics_process(delta: float) -> void:
         velocity.x -= jump_speed * sin(ground_angle_rad);
         velocity.y -= jump_speed * cos(ground_angle_rad);
         is_jumping = true
-        is_movement_grounded = false
 
     elif is_movement_grounded:
         is_jumping = false
-
+        
         if movement_dir != 0:
             if sign(movement_dir) != sign(ground_speed):
                 ground_speed += deceleration_speed * delta * movement_dir
@@ -93,15 +107,10 @@ func _physics_process(delta: float) -> void:
         velocity.x = ground_speed * cos(ground_angle_rad)
         velocity.y = ground_speed * -sin(ground_angle_rad)
     else:
-        # Movement
-        if is_left_pressed:
-            velocity.x -= air_acceleration * delta
-            if velocity.x < -top_speed:
-                velocity.x = - top_speed
-        if is_right_pressed:
-            velocity.x += air_acceleration * delta
-            if velocity.x > top_speed:
-                velocity.x = top_speed
+        # Air movement
+        if abs(velocity.x) < top_speed:
+            velocity.x += air_acceleration * movement_dir * delta
+            velocity.x = clamp(velocity.x, -top_speed, top_speed)
 
         # Variable jump height
         if is_jumping and not is_jump_pressed:
@@ -109,6 +118,7 @@ func _physics_process(delta: float) -> void:
                 velocity.y = - jump_stop_speed
         
         # Drag factor: I was a bit confused by this calculation so I left it off
+        #  (see https://info.sonicretro.org/SPG:Air_State#Air_Drag)
         # if velocity.y < 0 && velocity.y > -4:
         #     velocity.x -= (velocity.x / 256); # May need to update to use "div"?
 
