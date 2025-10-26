@@ -16,73 +16,116 @@ position = Vector2(511, 292)
 
 [node name="World" type="Node2D" parent="."]
 
-[node name="Ground" type="StaticBody2D" parent="World"]
+[node name="Ground" type="Node2D" parent="World"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground"]
+[node name="StartingBucket" type="StaticBody2D" parent="World/Ground"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Ground/StartingBucket"]
 position = Vector2(507.75, 424.5)
 shape = SubResource("RectangleShape2D_mf4mk")
 
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-281, 280)
-shape = SubResource("RectangleShape2D_mf4mk")
-
-[node name="CollisionShape2D12" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(31, -254)
-shape = SubResource("RectangleShape2D_mf4mk")
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(1267.06, 210.75)
-shape = SubResource("RectangleShape2D_mf4mk")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground/StartingBucket"]
 position = Vector2(12, 37)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="World/Ground"]
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="World/Ground/StartingBucket"]
 position = Vector2(10, 0)
 polygon = PackedVector2Array(225, 442, 225, 409, 8, 261, -14, 262, -6, 439)
 
-[node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-1087, 212)
-shape = SubResource("RectangleShape2D_8uh7m")
+[node name="RightLoop" type="StaticBody2D" parent="World/Ground"]
 
-[node name="CollisionShape2D5" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-1611, 125)
-shape = SubResource("RectangleShape2D_8uh7m")
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="World/Ground/RightLoop"]
+position = Vector2(1267.06, 210.75)
+shape = SubResource("RectangleShape2D_mf4mk")
 
-[node name="CollisionShape2D9" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-1395, -136)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D10" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-951, -215)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D11" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-504, -252)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-1831, -98)
-rotation = 1.57079
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="World/Ground"]
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="World/Ground/RightLoop"]
 position = Vector2(809, -176)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
-[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="World/Ground"]
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="World/Ground/RightLoop"]
 position = Vector2(809, 139)
 scale = Vector2(1, -1)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="World/Ground"]
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="World/Ground/RightLoop"]
 position = Vector2(1284, -248)
 shape = SubResource("RectangleShape2D_mf4mk")
 
-[node name="CollisionShape2D7" type="CollisionShape2D" parent="World/Ground"]
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="World/Ground/RightLoop"]
 position = Vector2(711, -248)
 shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="LeftPlatforms" type="StaticBody2D" parent="World/Ground"]
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-281, 280)
+shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionShape2D12" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(31, -254)
+shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-1087, 212)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-1611, 125)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D9" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-1395, -136)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D10" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-951, -215)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D11" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-504, -252)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-1831, -98)
+rotation = 1.57079
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="LeftLoop" type="StaticBody2D" parent="World/Ground"]
+position = Vector2(-69, 144)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-807, 875.35)
+shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-1265.06, 488.6)
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-1265.06, 803.6)
+scale = Vector2(1, -1)
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-576, 418)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionPolygon2D5" type="CollisionPolygon2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-349.2, 488.6)
+rotation = 3.14159
+scale = Vector2(1, -1)
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+
+[node name="CollisionPolygon2D6" type="CollisionPolygon2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-349.2, 803.6)
+rotation = 3.14159
+polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
+position = Vector2(-1011, 417)
+rotation = -3.14159
+scale = Vector2(1, -1)
+shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 
