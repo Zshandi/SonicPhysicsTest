@@ -18,9 +18,9 @@ var acceleration_speed = 0.046875 * acceleration_scale
 var deceleration_speed = 0.5 * acceleration_scale
 var friction_speed = 0.046875 * acceleration_scale
 
-var slope_factor_normal = 0.125
-var slope_factor_rollup = 0.078125
-var slope_factor_rolldown = 0.3125
+var slope_factor_normal = 0.125 * acceleration_scale
+var slope_factor_rollup = 0.078125 * acceleration_scale
+var slope_factor_rolldown = 0.3125 * acceleration_scale
 
 var air_acceleration := 0.09375 * acceleration_scale
 
@@ -62,6 +62,7 @@ var facing_dir_scale := 1
 @onready
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
+var DEBUG_SLOPES := "SLOPES"
 func _physics_process(delta: float) -> void:
     _update_ground_stuff(delta)
 
@@ -88,8 +89,24 @@ func _physics_process(delta: float) -> void:
         is_jumping = true
 
     elif is_movement_grounded:
+        DebugValues.category(DEBUG_SLOPES, KEY_A)
+        DebugValues.debug("ground_angle: ", ground_angle, DEBUG_SLOPES)
+        DebugValues.debug("ground_speed (start): ", ground_speed, DEBUG_SLOPES)
+
         is_jumping = false
         
+        var slope_factor = slope_factor_normal
+        if is_rolling:
+            if sign(ground_speed) == sign(sin(ground_angle_rad)):
+                slope_factor = slope_factor_rollup
+            else:
+                slope_factor = slope_factor_rolldown
+
+        ground_speed -= slope_factor * delta * sin(ground_angle_rad)
+        
+        DebugValues.debug("slope_factor: ", slope_factor, DEBUG_SLOPES)
+        DebugValues.debug("ground_speed Change: ", -slope_factor * delta * sin(ground_angle_rad), DEBUG_SLOPES)
+
         if movement_dir != 0:
             if sign(movement_dir) != sign(ground_speed):
                 ground_speed += deceleration_speed * delta * movement_dir
@@ -103,6 +120,8 @@ func _physics_process(delta: float) -> void:
             if ground_speed_sign != sign(ground_speed):
                 # We stopped, don't jitter
                 ground_speed = 0
+        
+        DebugValues.debug("ground_speed (end): ", ground_speed, DEBUG_SLOPES)
         
         velocity.x = ground_speed * cos(ground_angle_rad)
         velocity.y = ground_speed * -sin(ground_angle_rad)
