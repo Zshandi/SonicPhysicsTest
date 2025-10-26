@@ -174,6 +174,9 @@ func _process(_delta: float) -> void:
     
     $SanicStanding.scale.x = abs($SanicStanding.scale.x) * facing_dir_scale
 
+    if Input.is_key_pressed(KEY_R):
+        get_tree().reload_current_scene()
+
 func _update_for_ground_angle():
     if not is_on_ground:
         ground_angle = 0
