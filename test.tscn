@@ -26,6 +26,10 @@ shape = SubResource("RectangleShape2D_mf4mk")
 position = Vector2(-281, 280)
 shape = SubResource("RectangleShape2D_mf4mk")
 
+[node name="CollisionShape2D12" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(31, -254)
+shape = SubResource("RectangleShape2D_mf4mk")
+
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="World/Ground"]
 position = Vector2(1267.06, 210.75)
 shape = SubResource("RectangleShape2D_mf4mk")
@@ -39,11 +43,28 @@ position = Vector2(10, 0)
 polygon = PackedVector2Array(225, 442, 225, 409, 8, 261, -14, 262, -6, 439)
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-946, 281)
+position = Vector2(-1087, 212)
 shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="CollisionShape2D5" type="CollisionShape2D" parent="World/Ground"]
-position = Vector2(-1377, 285)
+position = Vector2(-1611, 125)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D9" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-1395, -136)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D10" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-951, -215)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D11" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-504, -252)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-1831, -98)
+rotation = 1.57079
 shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="World/Ground"]

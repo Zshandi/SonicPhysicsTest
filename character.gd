@@ -39,7 +39,7 @@ var ground_angle := 0.0:
         ground_angle = value
         ground_angle_rad = deg_to_rad(value)
 
-var is_on_ground := false
+var is_movement_grounded := false
 var is_jumping := false
 
 var facing_dir_scale := 1
@@ -67,13 +67,13 @@ func _physics_process(delta: float) -> void:
         facing_dir_scale = 1
         movement_dir = 1
 
-    if is_on_ground and is_jump_pressed:
+    if is_movement_grounded and is_jump_pressed:
         velocity.x -= jump_speed * sin(ground_angle_rad);
         velocity.y -= jump_speed * cos(ground_angle_rad);
         is_jumping = true
-        is_on_ground = false
+        is_movement_grounded = false
 
-    elif is_on_ground:
+    elif is_movement_grounded:
         is_jumping = false
 
         if movement_dir != 0:
@@ -107,7 +107,8 @@ func _physics_process(delta: float) -> void:
         if is_jumping and not is_jump_pressed:
             if velocity.y < -jump_stop_speed:
                 velocity.y = - jump_stop_speed
-        # Drag factor
+        
+        # Drag factor: I was a bit confused by this calculation so I left it off
         # if velocity.y < 0 && velocity.y > -4:
         #     velocity.x -= (velocity.x / 256); # May need to update to use "div"?
 
@@ -121,17 +122,17 @@ func _physics_process(delta: float) -> void:
 
 var DEBUG_SENSORS := "SENSORS"
 func _update_ground_stuff(_delta: float):
-    var was_on_ground = is_on_ground
+    var was_movement_grounded = is_movement_grounded
 
-    is_on_ground = is_on_floor()
+    is_movement_grounded = is_on_floor()
 
-    if was_on_ground or is_on_ground:
+    if was_movement_grounded or is_movement_grounded:
         var total_normal = Vector2.ZERO
         var total_normal_count = 0
         for sensor in ground_sensors:
             if sensor.is_colliding() and sensor.get_collision_depth() < 15 and \
-                (not was_on_ground or abs(sensor.get_collision_normal().angle_to(up_direction)) < 50):
-                is_on_ground = true
+                (not was_movement_grounded or abs(sensor.get_collision_normal().angle_to(up_direction)) < 50):
+                is_movement_grounded = true
                 total_normal += sensor.get_collision_normal()
                 total_normal_count += 1
         DebugValues.category(DEBUG_SENSORS, KEY_S)
@@ -148,11 +149,11 @@ func _update_ground_stuff(_delta: float):
             DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
     
     _update_for_ground_angle()
-    if is_on_ground:
+    if is_movement_grounded:
         if not is_on_floor():
             _snap_downward()
 
-        if not was_on_ground:
+        if not was_movement_grounded:
             # If we just landed, calculate the ground speed from the velocity
             ground_speed = velocity.length()
             var dot = velocity.dot(Vector2.RIGHT.rotated(ground_angle_rad))
@@ -160,7 +161,7 @@ func _update_ground_stuff(_delta: float):
     
     DebugValues.debug("ground_speed", ground_speed)
     DebugValues.debug("ground_angle", ground_angle)
-    DebugValues.debug("is_on_ground", is_on_ground)
+    DebugValues.debug("is_movement_grounded", is_movement_grounded)
     DebugValues.debug("velocity", velocity)
     DebugValues.debug("global_position", global_position)
 
@@ -178,7 +179,7 @@ func _process(_delta: float) -> void:
         get_tree().reload_current_scene()
 
 func _update_for_ground_angle():
-    if not is_on_ground:
+    if not is_movement_grounded:
         ground_angle = 0
     up_direction = Vector2.UP.rotated(ground_angle_rad)
     rotation_degrees = - ground_angle
