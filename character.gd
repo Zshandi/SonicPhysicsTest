@@ -29,6 +29,12 @@ var top_falling_speed := 16 * speed_scale
 
 var ground_distance := 5
 
+var wall_min_angle := 46
+var wall_max_angle := 360 - wall_min_angle
+
+var ceiling_min_angle := 135
+var ceiling_max_angle := 360 - wall_min_angle
+
 # State variables
 
 var ground_speed := 0.0
@@ -44,7 +50,12 @@ var is_movement_grounded := false:
         is_movement_grounded = value
         if value and is_jumping: is_jumping = false
         if not value and is_rolling: is_rolling = false
-        
+
+const ANGLE_ON_FLOOR := 0
+const ANGLE_ON_WALL := 0
+const ANGLE_ON_CEILING := 0
+var ground_angle_state := ANGLE_ON_FLOOR
+
 var is_rolling := false:
     set(value):
         is_rolling = value
@@ -188,8 +199,18 @@ func _update_ground_stuff(_delta: float):
             var dot = velocity.dot(Vector2.RIGHT.rotated(ground_angle_rad))
             ground_speed *= sign(dot)
     
+    var ground_angle_state_str = "ANGLE_ON_FLOOR"
+    ground_angle_state = ANGLE_ON_FLOOR
+    if ground_angle >= ceiling_min_angle and ground_angle <= ceiling_max_angle:
+        ground_angle_state = ANGLE_ON_CEILING
+        ground_angle_state_str = "ANGLE_ON_CEILING"
+    elif ground_angle >= wall_min_angle and ground_angle <= wall_max_angle:
+        ground_angle_state = ANGLE_ON_WALL
+        ground_angle_state_str = "ANGLE_ON_WALL"
+
     DebugValues.debug("ground_speed", ground_speed)
     DebugValues.debug("ground_angle", ground_angle)
+    DebugValues.debug("ground_angle_state", ground_angle_state_str)
     DebugValues.debug("is_movement_grounded", is_movement_grounded)
     DebugValues.debug("velocity", velocity)
     DebugValues.debug("global_position", global_position)
