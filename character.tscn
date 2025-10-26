@@ -43,3 +43,5 @@ unique_name_in_owner = true
 position = Vector2(0, 30)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
+
+[node name="Camera2D" type="Camera2D" parent="."]

@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://k3i7kvw0on2b"]
+[gd_scene load_steps=5 format=3 uid="uid://k3i7kvw0on2b"]
 
 [ext_resource type="PackedScene" uid="uid://t4vrk47fmr35" path="res://character.tscn" id="1_37kl0"]
 [ext_resource type="Script" uid="uid://c7bjgsb7wh8ye" path="res://debug_values.gd" id="2_8uh7m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mf4mk"]
-size = Vector2(570.5, 37)
+size = Vector2(586.125, 37.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8uh7m"]
+size = Vector2(110, 36)
 
 [node name="Node2D" type="Node2D"]
 
@@ -19,13 +22,29 @@ position = Vector2(511, 292)
 position = Vector2(507.75, 424.5)
 shape = SubResource("RectangleShape2D_mf4mk")
 
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-281, 280)
+shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(1267.06, 210.75)
+shape = SubResource("RectangleShape2D_mf4mk")
+
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="World/Ground"]
 position = Vector2(12, 37)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="World/Ground"]
-position = Vector2(-135, -5)
-polygon = PackedVector2Array(225, 442, 225, 409, 8, 260, 10, 441)
+position = Vector2(10, 0)
+polygon = PackedVector2Array(225, 442, 225, 409, 8, 260, -14, 261, -6, 439)
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-814, 281)
+shape = SubResource("RectangleShape2D_8uh7m")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="World/Ground"]
+position = Vector2(-1106, 281)
+shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 
