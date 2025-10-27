@@ -21,6 +21,7 @@ var friction_speed := 0.046875 * acceleration_scale
 var roll_friction_speed := 0.0234375 * acceleration_scale
 var roll_deceleration_speed := 0.125 * acceleration_scale
 var top_speed_rolling := 16 * speed_scale
+var min_rolling_start_speed := 1 * speed_scale
 
 var slope_factor_normal := 0.125 * acceleration_scale
 var slope_factor_rollup := 0.078125 * acceleration_scale
@@ -56,6 +57,7 @@ var is_movement_grounded := false:
 	set(value):
 		is_movement_grounded = value
 		if value and is_jumping: is_jumping = false
+		if not value and is_crouching: is_crouching = false
 
 const ANGLE_ON_FLOOR := 0
 const ANGLE_ON_WALL := 1
@@ -68,6 +70,8 @@ var is_jumping := false:
 		is_jumping = value
 		if value:
 			if is_movement_grounded: is_movement_grounded = false
+
+var is_crouching := false
 
 var facing_dir_scale := 1
 var movement_dir := 0.0
@@ -86,6 +90,7 @@ func _physics_process(delta: float) -> void:
 
 	var is_left_pressed := Input.is_action_pressed("ui_left")
 	var is_right_pressed := Input.is_action_pressed("ui_right")
+	var is_crouch_pressed := Input.is_action_pressed("ui_down")
 	var is_jump_pressed := Input.is_action_just_pressed("ui_accept")
 	var is_jump_held := Input.is_action_pressed("ui_accept")
 
@@ -123,6 +128,14 @@ func _physics_process(delta: float) -> void:
 	elif is_movement_grounded:
 		is_jumping = false
 
+		if is_crouch_pressed and not is_rolling:
+			if ground_speed < min_rolling_start_speed:
+				is_crouching = true
+			else:
+				is_rolling = true
+		else:
+			is_crouching = false
+
 		DebugValues.category(DEBUG_SLOPES, KEY_A)
 		DebugValues.debug("ground_angle", ground_angle, DEBUG_SLOPES)
 		DebugValues.debug("ground_speed (start)", ground_speed / speed_scale, DEBUG_SLOPES)
@@ -142,16 +155,20 @@ func _physics_process(delta: float) -> void:
 			DebugValues.debug("slope_factor", slope_factor / acceleration_scale, DEBUG_SLOPES)
 			DebugValues.debug("ground_speed Change", (-slope_factor * delta * sin(ground_angle_rad)) / speed_scale, DEBUG_SLOPES)
 
-		if movement_dir != 0:
+		if movement_dir != 0 and not is_crouching:
 			if sign(movement_dir) != sign(ground_speed):
-				ground_speed += deceleration_speed * delta * movement_dir
-			elif abs(ground_speed) < top_speed:
+				if is_rolling:
+					ground_speed += roll_deceleration_speed * delta * movement_dir
+				else:
+					ground_speed += deceleration_speed * delta * movement_dir
+			elif abs(ground_speed) < top_speed and not is_rolling:
 				ground_speed += acceleration_speed * delta * movement_dir
 				ground_speed = clamp(ground_speed, -top_speed, top_speed)
 		
-		else:
+		if movement_dir == 0 or is_rolling:
+			var effective_friction = roll_friction_speed if is_rolling else friction_speed
 			var ground_speed_sign = sign(ground_speed)
-			ground_speed -= sign(ground_speed) * friction_speed * delta
+			ground_speed -= sign(ground_speed) * effective_friction * delta
 			if ground_speed_sign != sign(ground_speed):
 				# We stopped, don't jitter
 				ground_speed = 0
@@ -237,6 +254,10 @@ func _update_ground_stuff(_delta: float):
 				
 				DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
 	
+	if is_rolling and velocity.length() < 0.01 / speed_scale:
+		if ground_angle_within(5):
+			is_rolling = false
+
 	_update_for_ground_angle()
 	if is_movement_grounded:
 		if not is_on_floor():
@@ -267,6 +288,8 @@ func _process(_delta: float) -> void:
 		%CharacterSprite.play("jumping")
 	elif is_rolling:
 		%CharacterSprite.play("rolling")
+	elif is_crouching:
+		%CharacterSprite.play("crouching")
 	elif is_movement_grounded:
 		if movement_dir != 0 or abs(ground_speed) > 0.1:
 			%CharacterSprite.play("running")
