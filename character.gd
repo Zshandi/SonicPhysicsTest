@@ -74,16 +74,20 @@ var movement_dir := 0.0
 
 var control_lock_timer := 0.0
 
+var dont_update_grounded_once := false
+
 @onready
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
 var DEBUG_SLOPES := "SLOPES"
+var DEBUG_JUMP := "JUMP"
 func _physics_process(delta: float) -> void:
 	_update_ground_stuff(delta)
 
 	var is_left_pressed := Input.is_action_pressed("ui_left")
 	var is_right_pressed := Input.is_action_pressed("ui_right")
-	var is_jump_pressed := Input.is_action_pressed("ui_accept")
+	var is_jump_pressed := Input.is_action_just_pressed("ui_accept")
+	var is_jump_held := Input.is_action_pressed("ui_accept")
 
 	if (is_left_pressed and is_right_pressed) or control_lock_timer > 0:
 		is_left_pressed = false
@@ -98,10 +102,23 @@ func _physics_process(delta: float) -> void:
 		facing_dir_scale = 1
 		movement_dir = 1
 
+	DebugValues.category(DEBUG_JUMP, KEY_J)
+
+	var jump_x := -jump_speed * sin(ground_angle_rad)
+	var jump_y := -jump_speed * cos(ground_angle_rad)
+	var jump := Vector2(jump_x, jump_y).length()
+	DebugValues.debug("jump_x", jump_x / speed_scale, DEBUG_JUMP)
+	DebugValues.debug("jump_y", jump_y / speed_scale, DEBUG_JUMP)
+	DebugValues.debug("jump", jump / speed_scale, DEBUG_JUMP)
+
 	if is_movement_grounded and is_jump_pressed:
-		velocity.x -= jump_speed * sin(ground_angle_rad);
-		velocity.y -= jump_speed * cos(ground_angle_rad);
+		velocity.x += jump_x
+		velocity.y += jump_y
 		is_jumping = true
+		is_movement_grounded = false
+		# This fixes a weird bug, where at certain angles is_on_floor()
+		#  still returns true the next frame after jumping...
+		dont_update_grounded_once = true
 
 	elif is_movement_grounded:
 		is_jumping = false
@@ -170,7 +187,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = clamp(velocity.x, -top_speed, top_speed)
 
 		# Variable jump height
-		if is_jumping and not is_jump_pressed:
+		if is_jumping and not is_jump_held:
 			if velocity.y < -jump_stop_speed:
 				velocity.y = - jump_stop_speed
 		
@@ -191,29 +208,34 @@ var DEBUG_SENSORS := "SENSORS"
 func _update_ground_stuff(_delta: float):
 	var was_movement_grounded = is_movement_grounded
 
-	is_movement_grounded = is_on_floor()
+	if dont_update_grounded_once:
+		# This fixes a weird bug, where at certain angles is_on_floor()
+		#  still returns true the next frame after jumping...
+		dont_update_grounded_once = false
+	else:
+		is_movement_grounded = is_on_floor()
 
-	if was_movement_grounded or is_movement_grounded:
-		var total_normal = Vector2.ZERO
-		var total_normal_count = 0
-		for sensor in ground_sensors:
-			if sensor.is_colliding() and sensor.get_collision_depth() < 15 and \
-				(not was_movement_grounded or abs(sensor.get_collision_normal().angle_to(up_direction)) < 50):
-				is_movement_grounded = true
-				total_normal += sensor.get_collision_normal()
-				total_normal_count += 1
-		DebugValues.category(DEBUG_SENSORS, KEY_S)
-		DebugValues.debug("total_normal_count", total_normal_count, DEBUG_SENSORS)
-		DebugValues.debug("total_normal", total_normal, DEBUG_SENSORS)
-		DebugValues.debug("avg_normal", 0, DEBUG_SENSORS)
-		
-		if total_normal_count > 0:
-			var avg_normal = total_normal / total_normal_count
-			ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
-			if ground_angle < 0:
-				ground_angle += 360
+		if was_movement_grounded or is_movement_grounded:
+			var total_normal = Vector2.ZERO
+			var total_normal_count = 0
+			for sensor in ground_sensors:
+				if sensor.is_colliding() and sensor.get_collision_depth() < 15 and \
+					(not was_movement_grounded or abs(sensor.get_collision_normal().angle_to(up_direction)) < 50):
+					is_movement_grounded = true
+					total_normal += sensor.get_collision_normal()
+					total_normal_count += 1
+			DebugValues.category(DEBUG_SENSORS, KEY_S)
+			DebugValues.debug("total_normal_count", total_normal_count, DEBUG_SENSORS)
+			DebugValues.debug("total_normal", total_normal, DEBUG_SENSORS)
+			DebugValues.debug("avg_normal", 0, DEBUG_SENSORS)
 			
-			DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
+			if total_normal_count > 0:
+				var avg_normal = total_normal / total_normal_count
+				ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
+				if ground_angle < 0:
+					ground_angle += 360
+				
+				DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
 	
 	_update_for_ground_angle()
 	if is_movement_grounded:
