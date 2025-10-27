@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnbhdwg3w2f6g"
-path="res://.godot/imported/sanic_sprites.png-eecbbc0697e9b344a1a30a00c2d90942.ctex"
+uid="uid://cmqc5hb5yuou"
+path="res://.godot/imported/sanic_sprites2-row3.png-b571ca132aa78a0d8099cc45f50060de.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sanic_sprites.png"
-dest_files=["res://.godot/imported/sanic_sprites.png-eecbbc0697e9b344a1a30a00c2d90942.ctex"]
+source_file="res://assets/sanic_sprites2-row3.png"
+dest_files=["res://.godot/imported/sanic_sprites2-row3.png-b571ca132aa78a0d8099cc45f50060de.ctex"]
 
 [params]
 

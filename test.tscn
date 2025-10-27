@@ -107,7 +107,7 @@ scale = Vector2(1, -1)
 polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.276, 961, 200, 954, 242, 937, 281, 909, 313, 869, 343, 824, 359, 773, 366, 728, 369)
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
-position = Vector2(-576, 418)
+position = Vector2(-602, 417)
 shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="CollisionPolygon2D5" type="CollisionPolygon2D" parent="World/Ground/LeftLoop"]

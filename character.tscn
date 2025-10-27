@@ -1,13 +1,50 @@
-[gd_scene load_steps=9 format=3 uid="uid://t4vrk47fmr35"]
+[gd_scene load_steps=19 format=3 uid="uid://t4vrk47fmr35"]
 
 [ext_resource type="Script" uid="uid://c12ui2dc4h345" path="res://character.gd" id="1_glpr6"]
-[ext_resource type="Texture2D" uid="uid://dj8b50ldnibvx" path="res://assets/sanic_ball.png" id="2_pjt0s"]
-[ext_resource type="Texture2D" uid="uid://dgordgqbmihpd" path="res://assets/sanic_standing.png" id="3_wa5vi"]
 [ext_resource type="Script" uid="uid://b38exo7wrm7hg" path="res://sensor.gd" id="4_wfnr8"]
 [ext_resource type="Texture2D" uid="uid://bh5wbw5y1dj7l" path="res://assets/sanic_sprites2-row1.png" id="5_px5sl"]
+[ext_resource type="Texture2D" uid="uid://cmqc5hb5yuou" path="res://assets/sanic_sprites2-row3.png" id="5_yxww1"]
+[ext_resource type="Texture2D" uid="uid://b4rhibcsvl4dn" path="res://assets/sanic_sprites2-row2.png" id="6_wdpcj"]
+[ext_resource type="Texture2D" uid="uid://4edo04jln26n" path="res://assets/sanic_sprites2-row4.png" id="7_qi5as"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pjt0s"]
-size = Vector2(40, 60)
+size = Vector2(26, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jb3kq"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(680, 0, 120, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1b4b"]
+atlas = ExtResource("5_yxww1")
+region = Rect2(910, 0, 110, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7tnxx"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(1190, 0, 85, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwfjh"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(800, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1sy7"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(896, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sm1rv"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(992, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jx0ln"]
+atlas = ExtResource("5_px5sl")
+region = Rect2(1088, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lpiy1"]
+atlas = ExtResource("6_wdpcj")
+region = Rect2(200, 0, 120, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88tkl"]
+atlas = ExtResource("7_qi5as")
+region = Rect2(436, 0, 80, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0qfo5"]
 atlas = ExtResource("5_px5sl")
@@ -17,15 +54,67 @@ region = Rect2(0, 0, 98, 128)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_jb3kq")
+}],
+"loop": true,
+"name": &"crouching",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1b4b")
+}],
+"loop": true,
+"name": &"falling",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7tnxx")
+}],
+"loop": true,
+"name": &"jumping",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwfjh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1sy7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sm1rv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jx0ln")
+}],
+"loop": true,
+"name": &"rolling",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lpiy1")
+}],
+"loop": true,
+"name": &"running",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_88tkl")
+}],
+"loop": true,
+"name": &"spindash",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_0qfo5")
 }],
 "loop": true,
-"name": &"default",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": true,
-"name": &"walking",
+"name": &"standing",
 "speed": 5.0
 }]
 
@@ -36,37 +125,29 @@ script = ExtResource("1_glpr6")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_pjt0s")
 
-[node name="SanicBall" type="Sprite2D" parent="."]
-visible = false
-scale = Vector2(0.427, 0.427)
-texture = ExtResource("2_pjt0s")
-
-[node name="SanicStanding" type="Sprite2D" parent="."]
-position = Vector2(-3, -12)
-scale = Vector2(0.427, 0.427)
-texture = ExtResource("3_wa5vi")
-
 [node name="GroundSensor1" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(20, 30)
+position = Vector2(13, 23)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor2" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-20, 30)
+position = Vector2(-13, 23)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor3" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, 30)
+position = Vector2(0, 23)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-visible = false
+[node name="CharacterSprite" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-1, 1)
+scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_yxww1")
-animation = &"walking"
+animation = &"standing"
