@@ -101,11 +101,15 @@ func _physics_process(delta: float) -> void:
 	movement_dir = 0
 
 	if is_left_pressed:
-		facing_dir_scale = -1
 		movement_dir = -1
 	elif is_right_pressed:
-		facing_dir_scale = 1
 		movement_dir = 1
+
+	if is_rolling:
+		if is_movement_grounded and ground_speed != 0:
+			facing_dir_scale = sign(ground_speed)
+	elif movement_dir != 0:
+		facing_dir_scale = sign(movement_dir)
 
 	DebugValues.category(DEBUG_JUMP, KEY_J)
 
@@ -199,7 +203,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = ground_speed * -sin(ground_angle_rad)
 	else:
 		# Air movement
-		if abs(velocity.x) < top_speed:
+		if abs(velocity.x) < top_speed and (not is_rolling or is_jumping):
 			velocity.x += air_acceleration * movement_dir * delta
 			velocity.x = clamp(velocity.x, -top_speed, top_speed)
 
@@ -254,8 +258,8 @@ func _update_ground_stuff(_delta: float):
 				
 				DebugValues.debug("avg_normal", avg_normal, DEBUG_SENSORS)
 	
-	if is_rolling and velocity.length() < 0.01 / speed_scale:
-		if ground_angle_within(5):
+	if is_rolling and velocity.length() < 0.01 * speed_scale:
+		if (not ground_angle_within(5) and is_movement_grounded) or (movement_dir != 0 and sign(movement_dir) != sign(ground_speed)):
 			is_rolling = false
 
 	_update_for_ground_angle()
