@@ -70,6 +70,7 @@ var is_jumping := false:
 			if is_movement_grounded: is_movement_grounded = false
 
 var facing_dir_scale := 1
+var movement_dir := 0.0
 
 var control_lock_timer := 0.0
 
@@ -88,7 +89,7 @@ func _physics_process(delta: float) -> void:
 		is_left_pressed = false
 		is_right_pressed = false
 
-	var movement_dir = 0
+	movement_dir = 0
 
 	if is_left_pressed:
 		facing_dir_scale = -1
@@ -107,7 +108,7 @@ func _physics_process(delta: float) -> void:
 
 		DebugValues.category(DEBUG_SLOPES, KEY_A)
 		DebugValues.debug("ground_angle", ground_angle, DEBUG_SLOPES)
-		DebugValues.debug("ground_speed (start)", ground_speed, DEBUG_SLOPES)
+		DebugValues.debug("ground_speed (start)", ground_speed / speed_scale, DEBUG_SLOPES)
 
 		DebugValues.debug("slope_factor", 0, DEBUG_SLOPES)
 		DebugValues.debug("ground_speed Change", 0, DEBUG_SLOPES)
@@ -121,8 +122,8 @@ func _physics_process(delta: float) -> void:
 
 			ground_speed -= slope_factor * delta * sin(ground_angle_rad)
 		
-			DebugValues.debug("slope_factor", slope_factor, DEBUG_SLOPES)
-			DebugValues.debug("ground_speed Change", -slope_factor * delta * sin(ground_angle_rad), DEBUG_SLOPES)
+			DebugValues.debug("slope_factor", slope_factor / acceleration_scale, DEBUG_SLOPES)
+			DebugValues.debug("ground_speed Change", (-slope_factor * delta * sin(ground_angle_rad)) / speed_scale, DEBUG_SLOPES)
 
 		if movement_dir != 0:
 			if sign(movement_dir) != sign(ground_speed):
@@ -138,7 +139,7 @@ func _physics_process(delta: float) -> void:
 				# We stopped, don't jitter
 				ground_speed = 0
 		
-		DebugValues.debug("ground_speed (end)", ground_speed, DEBUG_SLOPES)
+		DebugValues.debug("ground_speed (end)", ground_speed / speed_scale, DEBUG_SLOPES)
 
 		if control_lock_timer <= 0:
 			control_lock_timer = 0
@@ -231,19 +232,26 @@ func _update_ground_stuff(_delta: float):
 	elif ground_angle_within(wall_min_angle):
 		ground_angle_state = ANGLE_ON_WALL
 
-	DebugValues.debug("ground_speed", ground_speed)
+	DebugValues.debug("ground_speed", ground_speed / speed_scale)
 	DebugValues.debug("ground_angle", ground_angle)
 	DebugValues.debug("ground_angle_state", ground_angle_state)
 	DebugValues.debug("is_movement_grounded", is_movement_grounded)
-	DebugValues.debug("velocity", velocity)
+	DebugValues.debug("velocity", velocity / speed_scale)
+	DebugValues.debug("speed", velocity.length() / speed_scale)
 	DebugValues.debug("global_position", global_position)
 
 func _process(_delta: float) -> void:
 	if is_jumping:
 		%CharacterSprite.play("jumping")
+	elif is_rolling:
+		%CharacterSprite.play("rolling")
+	elif is_movement_grounded:
+		if movement_dir != 0 or abs(ground_speed) > 0.1:
+			%CharacterSprite.play("running")
+		else:
+			%CharacterSprite.play("standing")
 	else:
-		%CharacterSprite.play("standing")
-	
+		%CharacterSprite.play("falling")
 	%CharacterSprite.scale.x = abs(%CharacterSprite.scale.x) * facing_dir_scale
 
 	if Input.is_key_pressed(KEY_R):
