@@ -30,10 +30,13 @@ var top_falling_speed := 16 * speed_scale
 var ground_distance := 5
 
 var wall_min_angle := 46
-var wall_max_angle := 360 - wall_min_angle
-
 var ceiling_min_angle := 135
-var ceiling_max_angle := 360 - wall_min_angle
+
+var slip_max_speed := 2.5 * speed_scale
+var slip_speed_reduction := 0.5 * speed_scale
+var slip_min_angle := 35
+var fall_min_angle := 69
+var control_lock_start := 0.5
 
 # State variables
 
@@ -70,6 +73,8 @@ var is_jumping := false:
 
 var facing_dir_scale := 1
 
+var control_lock_timer := 0.0
+
 @onready
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
@@ -81,7 +86,7 @@ func _physics_process(delta: float) -> void:
     var is_right_pressed := Input.is_action_pressed("ui_right")
     var is_jump_pressed := Input.is_action_pressed("ui_accept")
 
-    if is_left_pressed and is_right_pressed:
+    if (is_left_pressed and is_right_pressed) or control_lock_timer > 0:
         is_left_pressed = false
         is_right_pressed = false
 
@@ -136,6 +141,26 @@ func _physics_process(delta: float) -> void:
                 ground_speed = 0
         
         DebugValues.debug("ground_speed (end)", ground_speed, DEBUG_SLOPES)
+
+        if control_lock_timer <= 0:
+            control_lock_timer = 0
+            var slope_dir = -1 if ground_angle < 180 else 1
+            # Should player slip?
+            if abs(ground_speed) < slip_max_speed and ground_angle_within(slip_min_angle) and \
+                (sign(movement_dir) != sign(slope_dir) or movement_dir == 0 or ground_angle_state == ANGLE_ON_CEILING): # I added this last one
+                # Lock controls (slip)
+                control_lock_timer = control_lock_start
+                
+                # Should player fall?
+                if ground_angle_within(fall_min_angle):
+                    # Detach (fall)
+                    is_movement_grounded = false;
+                else:
+                    # Depending on what side of the player the slope is, add or subtract 0.5 from Ground Speed to slide down it
+                    ground_speed += slip_speed_reduction * slope_dir
+        else:
+            # Tick down timer
+            control_lock_timer -= delta;
         
         velocity.x = ground_speed * cos(ground_angle_rad)
         velocity.y = ground_speed * -sin(ground_angle_rad)
@@ -203,9 +228,9 @@ func _update_ground_stuff(_delta: float):
             ground_speed *= sign(dot)
     
     ground_angle_state = ANGLE_ON_FLOOR
-    if ground_angle >= ceiling_min_angle and ground_angle <= ceiling_max_angle:
+    if ground_angle_within(ceiling_min_angle):
         ground_angle_state = ANGLE_ON_CEILING
-    elif ground_angle >= wall_min_angle and ground_angle <= wall_max_angle:
+    elif ground_angle_within(wall_min_angle):
         ground_angle_state = ANGLE_ON_WALL
 
     DebugValues.debug("ground_speed", ground_speed)
@@ -240,3 +265,7 @@ func _snap_downward():
     var snap_velocity := direction * distance_to_snap
 
     move_and_collide(snap_velocity)
+
+func ground_angle_within(min_angle: float) -> bool:
+    var max_angle := 360 - min_angle
+    return ground_angle >= min_angle and ground_angle <= max_angle
