@@ -62,11 +62,11 @@ var facing_dir_scale := 1.0:
 
 var control_lock_timer := 0.0
 
-var dont_update_grounded_once := false
-
 var falling_state := FallingState.new(self)
 var grounded_state := GroundedState.new(self)
 var jumping_state := JumpingState.new(self)
+
+var lock_transition_frames := 0
 
 var current_state: State
 
@@ -86,7 +86,6 @@ func _ready() -> void:
 	grounded_state.add_transition(falling_state, transition_grounded_to_falling)
 
 func transition_air_to_grounded() -> bool:
-	if jumping_state.dont_transition_out_of_jumping: return false
 	return is_on_floor()
 
 func transition_grounded_to_jumping() -> bool:
@@ -118,6 +117,10 @@ func _process(delta: float) -> void:
 		get_tree().reload_current_scene()
 
 func transition_to_next_state(delta: float) -> void:
+	if lock_transition_frames > 0:
+		lock_transition_frames -= 1
+		return
+
 	var previous_state = current_state
 	var transition := current_state.get_next_transition()
 
