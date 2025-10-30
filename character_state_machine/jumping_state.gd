@@ -1,8 +1,10 @@
-extends AirStateBase
-class_name FallingState
+extends FallingState
+class_name JumpingState
+
+var dont_transition_out_of_jumping := false
 
 func _init(character: Character, name: String = ""):
-	super._init(character, ":Falling" + name)
+	super._init(character, ":Jumping" + name)
 
 # Called when the state is about to transition to another state
 func _transitioning_from(delta: float) -> void:
@@ -12,19 +14,27 @@ func _transitioning_from(delta: float) -> void:
 func _transitioned_to(delta: float) -> void:
 	super._transitioned_to(delta)
 
+	ch.velocity.x += -ch.jump_speed * sin(ch.ground_angle_rad)
+	ch.velocity.y += -ch.jump_speed * cos(ch.ground_angle_rad)
+	# This fixes a weird bug, where at certain angles is_on_floor()
+	#  still returns true the next frame after jumping...
+	dont_transition_out_of_jumping = true
+
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
-	# Air movement
-	if abs(ch.velocity.x) < ch.top_speed:
-		ch.velocity.x += ch.air_acceleration * ch.get_input_left_right() * delta
-		ch.velocity.x = clamp(ch.velocity.x, -ch.top_speed, ch.top_speed)
+	# Variable jump height
+	if not Input.is_action_pressed("action_primary"):
+		if ch.velocity.y < -ch.jump_stop_speed:
+			ch.velocity.y = - ch.jump_stop_speed
 	
+	dont_transition_out_of_jumping = false
+
 	super._physics_process(delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
-	ch.facing_dir_scale = ch.get_input_left_right()
-	ch.sprite.play("falling")
+	ch.facing_dir_scale = 1
+	ch.sprite.play("jumping")
 
 # Override this to disable air movement
 func _can_move() -> bool:

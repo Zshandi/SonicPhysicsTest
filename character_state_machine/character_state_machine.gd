@@ -63,6 +63,10 @@ var control_lock_timer := 0.0
 
 var dont_update_grounded_once := false
 
+var falling_state := FallingState.new(self)
+var grounded_state := GroundedState.new(self)
+var jumping_state := JumpingState.new(self)
+
 var current_state: State
 
 @onready
@@ -72,7 +76,23 @@ var sprite: AnimatedSprite2D = %CharacterSprite
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 
 func _ready() -> void:
-	current_state = FallingState.new(self)
+	current_state = falling_state
+
+	falling_state.add_transition(grounded_state, transition_air_to_grounded)
+	jumping_state.add_transition(grounded_state, transition_air_to_grounded)
+
+	grounded_state.add_transition(jumping_state, transition_grounded_to_jumping)
+	grounded_state.add_transition(falling_state, transition_grounded_to_falling)
+
+func transition_air_to_grounded():
+	if jumping_state.dont_transition_out_of_jumping: return false
+	return is_on_floor()
+
+func transition_grounded_to_jumping():
+	return Input.is_action_just_pressed("action_primary")
+
+func transition_grounded_to_falling():
+	return not is_on_floor()
 
 func _physics_process(delta: float) -> void:
 	transition_to_next_state(delta)
