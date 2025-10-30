@@ -84,6 +84,7 @@ func _ready() -> void:
 
 	grounded_state.add_transition(jumping_state, transition_grounded_to_jumping)
 	grounded_state.add_transition(falling_state, transition_grounded_to_falling)
+	grounded_state.add_transition(falling_state, grounded_state.should_fall)
 
 func transition_air_to_grounded() -> bool:
 	return is_on_floor()
@@ -154,6 +155,9 @@ func count_control_lock(delta: float) -> void:
 
 func start_control_lock() -> void:
 	control_lock_timer = control_lock_start
+
+func has_control_lock() -> bool:
+	return control_lock_timer > 0
 
 func snap_downward(distance_to_snap:=1000):
 	var direction := Vector2.DOWN.rotated(rotation)
