@@ -5,12 +5,12 @@ func _init(character: Character, name: String = ""):
 	super._init(character, ":Falling" + name)
 
 # Called when the state is about to transition to another state
-func _transitioning_from(delta: float) -> void:
-	super._transitioning_from(delta)
+func _state_exit(delta: float, next_state: State) -> void:
+	super._state_exit(delta, next_state)
 
 # Called when the state is transitioned to from another state
-func _transitioned_to(delta: float) -> void:
-	super._transitioned_to(delta)
+func _state_enter(delta: float, previous_state: State) -> void:
+	super._state_enter(delta, previous_state)
 
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:

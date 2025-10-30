@@ -104,10 +104,18 @@ func transition_grounded_to_falling() -> bool:
 func _physics_process(delta: float) -> void:
 	transition_to_next_state(delta)
 	current_state._physics_process(delta)
+	update_rotation_for_ground_angle()
 	move_and_slide()
+
+func update_rotation_for_ground_angle() -> void:
+	up_direction = Vector2.UP.rotated(ground_angle_rad)
+	rotation_degrees = - ground_angle
 
 func _process(delta: float) -> void:
 	current_state._process(delta)
+	
+	if Input.is_key_pressed(KEY_R):
+		get_tree().reload_current_scene()
 
 func transition_to_next_state(delta: float) -> void:
 	var previous_state = current_state
@@ -123,8 +131,8 @@ func transition_to_next_state(delta: float) -> void:
 			break
 	
 	if current_state != previous_state:
-		previous_state._transitioning_from(delta)
-		current_state._transitioned_to(delta)
+		previous_state._state_exit(delta, current_state)
+		current_state._state_enter(delta, current_state)
 
 func get_input_left_right() -> float:
 	if control_lock_timer > 0:
@@ -144,7 +152,7 @@ func count_control_lock(delta: float) -> void:
 func start_control_lock() -> void:
 	control_lock_timer = control_lock_start
 
-func _snap_downward(distance_to_snap:=1000):
+func snap_downward(distance_to_snap:=1000):
 	var direction := Vector2.DOWN.rotated(rotation)
 	var snap_velocity := direction * distance_to_snap
 
