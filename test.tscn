@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://k3i7kvw0on2b"]
+[gd_scene load_steps=6 format=3 uid="uid://k3i7kvw0on2b"]
 
 [ext_resource type="PackedScene" uid="uid://t4vrk47fmr35" path="res://character.tscn" id="1_37kl0"]
+[ext_resource type="Script" uid="uid://cm5gnnvi7lphn" path="res://character_state_machine/character_state_machine.gd" id="2_6uqi0"]
 [ext_resource type="Script" uid="uid://c7bjgsb7wh8ye" path="res://debug_values.gd" id="2_8uh7m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mf4mk"]
@@ -13,6 +14,7 @@ size = Vector2(171, 36)
 
 [node name="Character" parent="." instance=ExtResource("1_37kl0")]
 position = Vector2(511, 292)
+script = ExtResource("2_6uqi0")
 
 [node name="World" type="Node2D" parent="."]
 
