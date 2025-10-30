@@ -1,4 +1,4 @@
-extends GroundedState
+extends GroundedStateBase
 class_name IdleState
 
 func _init(character: Character, name: String = ""):
