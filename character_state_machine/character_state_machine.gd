@@ -58,6 +58,7 @@ var facing_dir_scale := 1.0:
 	set(value):
 		if value != 0:
 			facing_dir_scale = sign(value)
+			%CharacterSprite.scale.x = abs(%CharacterSprite.scale.x) * value
 
 var control_lock_timer := 0.0
 
