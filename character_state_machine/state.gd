@@ -24,11 +24,11 @@ func _init(character: Character, name: String = ""):
 	state_name = name
 
 # Called when the state is about to transition to another state
-func _transitioning_from(_delta: float) -> void:
+func _state_exit(_delta: float, _next_state: State) -> void:
 	pass
 
 # Called when the state is transitioned to from another state
-func _transitioned_to(_delta: float) -> void:
+func _state_enter(_delta: float, _previous_state: State) -> void:
 	pass
 
 # Called every frame after the state has been transitioned
