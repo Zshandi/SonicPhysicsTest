@@ -85,15 +85,21 @@ func _ready() -> void:
 	grounded_state.add_transition(jumping_state, transition_grounded_to_jumping)
 	grounded_state.add_transition(falling_state, transition_grounded_to_falling)
 
-func transition_air_to_grounded():
+func transition_air_to_grounded() -> bool:
 	if jumping_state.dont_transition_out_of_jumping: return false
 	return is_on_floor()
 
-func transition_grounded_to_jumping():
+func transition_grounded_to_jumping() -> bool:
 	return Input.is_action_just_pressed("action_primary")
 
-func transition_grounded_to_falling():
-	return not is_on_floor()
+func transition_grounded_to_falling() -> bool:
+	if is_on_floor(): return false
+
+	for sensor in ground_sensors:
+		if sensor.is_colliding() and sensor.get_collision_depth() < 15:
+			return false
+	
+	return true
 
 func _physics_process(delta: float) -> void:
 	transition_to_next_state(delta)
