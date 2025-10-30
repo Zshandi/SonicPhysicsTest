@@ -1,8 +1,8 @@
 extends State
-class_name GroundedState
+class_name GroundedStateBase
 
 func _init(character: Character, name: String = ""):
-	super._init(character, ":Grounded" + name)
+	super._init(character, "Grounded" + name)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -15,7 +15,7 @@ func _state_exit(delta: float, next_state: State) -> void:
 func _state_enter(delta: float, previous_state: State) -> void:
 	super._state_enter(delta, previous_state)
 
-	if not previous_state is GroundedState:
+	if not previous_state is GroundedStateBase:
 		update_ground_angle()
 		var dot = ch.velocity.dot(Vector2.RIGHT.rotated(ch.ground_angle_rad))
 		ch.ground_speed = ch.velocity.length() * sign(dot)
@@ -23,9 +23,8 @@ func _state_enter(delta: float, previous_state: State) -> void:
 
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
-	ch.count_control_lock(delta)
-
 	super._physics_process(delta)
+	ch.count_control_lock(delta)
 
 	update_ground_angle()
 	ch.update_rotation_for_ground_angle()
