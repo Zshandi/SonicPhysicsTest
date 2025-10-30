@@ -106,6 +106,14 @@ func _physics_process(delta: float) -> void:
 	current_state._physics_process(delta)
 	update_rotation_for_ground_angle()
 	move_and_slide()
+	
+	DebugValues.debug("ground_speed", ground_speed / speed_scale)
+	DebugValues.debug("ground_angle", ground_angle)
+	DebugValues.debug("velocity", velocity / speed_scale)
+	DebugValues.debug("speed", velocity.length() / speed_scale)
+	DebugValues.debug("global_position", global_position)
+	DebugValues.debug("state", current_state.state_name)
+
 
 func update_rotation_for_ground_angle() -> void:
 	up_direction = Vector2.UP.rotated(ground_angle_rad)
@@ -136,7 +144,7 @@ func transition_to_next_state(delta: float) -> void:
 	
 	if current_state != previous_state:
 		previous_state._state_exit(delta, current_state)
-		current_state._state_enter(delta, current_state)
+		current_state._state_enter(delta, previous_state)
 
 func get_input_left_right() -> float:
 	if control_lock_timer > 0:
