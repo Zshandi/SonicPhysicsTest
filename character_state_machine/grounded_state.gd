@@ -1,8 +1,8 @@
-extends AirStateBase
-class_name FallingState
+extends State
+class_name GroundedState
 
 func _init(character: Character, name: String = ""):
-	super._init(character, ":Falling" + name)
+	super._init(character, "Air" + name)
 
 # Called when the state is about to transition to another state
 func _transitioning_from(delta: float) -> void:
@@ -14,18 +14,9 @@ func _transitioned_to(delta: float) -> void:
 
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
-	# Air movement
-	if abs(ch.velocity.x) < ch.top_speed:
-		ch.velocity.x += ch.air_acceleration * ch.get_input_left_right() * delta
-		ch.velocity.x = clamp(ch.velocity.x, -ch.top_speed, ch.top_speed)
-	
 	super._physics_process(delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
 	ch.facing_dir_scale = ch.get_input_left_right()
-	ch.sprite.play("falling")
-
-# Override this to disable air movement
-func _can_move() -> bool:
-	return true
+	ch.sprite.play("standing")

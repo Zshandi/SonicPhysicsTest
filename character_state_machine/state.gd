@@ -15,7 +15,7 @@ func add_transition(to_state: State, condition: Callable):
 
 func get_next_transition() -> StateTransition:
 	for transition in transitions:
-		if transition.condition.call(ch):
+		if transition.condition.call():
 			return transition
 	return null
 
