@@ -1,7 +1,7 @@
 extends FallingState
 class_name JumpingState
 
-var dont_transition_out_of_jumping := false
+var dont_transition_out_of_jumping := 0
 
 func _init(character: Character, name: String = ""):
 	super._init(character, ":Jumping" + name)
@@ -18,7 +18,7 @@ func _state_enter(delta: float, previous_state: State) -> void:
 	ch.velocity.y += -ch.jump_speed * cos(ch.ground_angle_rad)
 	# This fixes a weird bug, where at certain angles is_on_floor()
 	#  still returns true the next frame after jumping...
-	dont_transition_out_of_jumping = true
+	dont_transition_out_of_jumping = 2
 
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
@@ -27,7 +27,7 @@ func _physics_process(delta: float) -> void:
 		if ch.velocity.y < -ch.jump_stop_speed:
 			ch.velocity.y = - ch.jump_stop_speed
 	
-	dont_transition_out_of_jumping = false
+	dont_transition_out_of_jumping = max(dont_transition_out_of_jumping - 1, 0)
 
 	super._physics_process(delta)
 
