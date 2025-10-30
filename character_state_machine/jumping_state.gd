@@ -10,6 +10,8 @@ func _init(character: Character, name: String = ""):
 func _state_exit(delta: float, next_state: State) -> void:
 	super._state_exit(delta, next_state)
 
+	dont_transition_out_of_jumping = 0
+
 # Called when the state is transitioned to from another state
 func _state_enter(delta: float, previous_state: State) -> void:
 	super._state_enter(delta, previous_state)
