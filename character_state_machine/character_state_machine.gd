@@ -58,12 +58,14 @@ var facing_dir_scale := 1.0:
 	set(value):
 		if value != 0:
 			facing_dir_scale = sign(value)
-			%CharacterSprite.scale.x = abs(%CharacterSprite.scale.x) * value
+			%CharacterSprite.scale.x = abs(%CharacterSprite.scale.x) * facing_dir_scale
 
 var control_lock_timer := 0.0
 
 var falling_state := FallingState.new(self)
-var grounded_state := GroundedState.new(self)
+var idle_state := IdleState.new(self)
+var running_state := RunningState.new(self)
+var rolling_state := RollingState.new(self)
 var jumping_state := JumpingState.new(self)
 
 var lock_transition_frames := 0
@@ -79,12 +81,31 @@ var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 func _ready() -> void:
 	current_state = falling_state
 
-	falling_state.add_transition(grounded_state, transition_air_to_grounded)
-	jumping_state.add_transition(grounded_state, transition_air_to_grounded)
+	falling_state.add_transition(idle_state, transition_air_to_grounded)
+	jumping_state.add_transition(idle_state, transition_air_to_grounded)
 
-	grounded_state.add_transition(jumping_state, transition_grounded_to_jumping)
-	grounded_state.add_transition(falling_state, transition_grounded_to_falling)
-	grounded_state.add_transition(falling_state, grounded_state.should_fall)
+	idle_state.add_transition(jumping_state, transition_grounded_to_jumping)
+	idle_state.add_transition(falling_state, transition_grounded_to_falling)
+	idle_state.add_transition(falling_state, idle_state.should_fall)
+	
+	running_state.add_transition(jumping_state, transition_grounded_to_jumping)
+	running_state.add_transition(falling_state, transition_grounded_to_falling)
+	running_state.add_transition(falling_state, running_state.should_fall)
+
+	rolling_state.add_transition(jumping_state, transition_grounded_to_jumping)
+	# rolling_state.add_transition(falling_state, transition_grounded_to_falling)
+	# rolling_state.add_transition(falling_state, rolling_state.should_fall)
+
+	idle_state.add_transition(running_state, func(): return is_running())
+	running_state.add_transition(idle_state, func(): return not is_running())
+
+	idle_state.add_transition(rolling_state, rolling_state.should_start_roll)
+	running_state.add_transition(rolling_state, rolling_state.should_start_roll)
+
+	rolling_state.add_transition(idle_state, func(): return ground_speed == 0)
+
+func is_running() -> bool:
+	return abs(ground_speed) > 0 or get_input_left_right() != 0
 
 func transition_air_to_grounded() -> bool:
 	return is_on_floor()
