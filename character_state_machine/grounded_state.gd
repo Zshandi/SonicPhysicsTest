@@ -2,7 +2,7 @@ extends State
 class_name GroundedState
 
 func _init(character: Character, name: String = ""):
-	super._init(character, "Air" + name)
+	super._init(character, ":Grounded" + name)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -38,9 +38,13 @@ func _physics_process(delta: float) -> void:
 		ch.ground_speed += ch.slip_speed_reduction * get_slope_dir()
 		ch.start_control_lock()
 	
+	_physics_process_ground_controls(delta)
+
 	ch.velocity.x = ch.ground_speed * cos(ch.ground_angle_rad)
 	ch.velocity.y = ch.ground_speed * -sin(ch.ground_angle_rad)
-	
+
+func _physics_process_ground_controls(_delta: float):
+	pass
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
@@ -85,3 +89,20 @@ func should_slip() -> bool:
 
 func should_fall() -> bool:
 	return should_slip() and ch.ground_angle_within(ch.fall_min_angle)
+
+# direction should be -1 for deceleration or 1 for acceleration
+func apply_acceleration(delta: float, direction: int, acceleration: float, top_speed: float) -> void:
+	var movement_dir = ch.get_input_left_right()
+	if movement_dir != 0 and (sign(movement_dir * direction) == sign(ch.ground_speed) or \
+		(direction == 1 and ch.ground_speed == 0)):
+		ch.ground_speed += acceleration * delta * movement_dir
+		ch.ground_speed = clamp(ch.ground_speed, -top_speed, top_speed)
+
+# direction should be -1 for deceleration or 1 for acceleration
+func apply_friction(delta: float, friction: float) -> void:
+	var ground_speed_sign = sign(ch.ground_speed)
+	var total_friction = ground_speed_sign * friction * delta
+	ch.ground_speed -= total_friction
+	if ground_speed_sign != sign(ch.ground_speed):
+		# We stopped, don't jitter
+		ch.ground_speed = 0
