@@ -2,7 +2,7 @@ extends GroundedStateBase
 class_name RollingState
 
 func _init(character: Character, name: String = ""):
-	super._init(character, ":Running" + name)
+	super._init(character, ":Rolling" + name)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:

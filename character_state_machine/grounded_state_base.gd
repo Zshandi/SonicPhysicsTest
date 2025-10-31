@@ -13,7 +13,7 @@ func _init(character: Character, name: String = ""):
 func _state_exit(delta: float, next_state: State) -> void:
 	super._state_exit(delta, next_state)
 
-	if should_fall() and not ch.has_control_lock():
+	if should_fall() and should_slip() and not ch.has_control_lock():
 		ch.start_control_lock()
 
 # Called when the state is transitioned to from another state
@@ -71,6 +71,10 @@ func does_slope_factor_apply() -> bool:
 	return abs(get_effective_slope_factor()) > _get_friction()
 
 func update_ground_angle() -> void:
+	# TODO: If there is a slightly less than 90 degree cliff, it should behave the same as 90 degrees,
+	#  however this currently will detect the cliff with one of the sensors and start turning sonic,
+	#  and this behavior is dependent on the current speed (i.e. if the frame lands the sensor on the hill)
+	# For now, we can just make sure not to add any nearly 90 degree cliffs, but we should fix this...
 	var total_normal = Vector2.ZERO
 	var total_normal_count = 0
 	for sensor in ch.ground_sensors:
@@ -112,7 +116,16 @@ func should_slip() -> bool:
 	return slip_conditions and (going_uphill or is_ground_angle_on_ceiling())
 
 func should_fall() -> bool:
-	return should_slip() and ch.ground_angle_within(ch.fall_min_angle)
+	if should_slip() and ch.ground_angle_within(ch.fall_min_angle):
+		return true
+	
+	if ch.is_on_floor(): return false
+
+	for sensor in ch.ground_sensors:
+		if sensor.is_colliding() and sensor.get_collision_depth() < 15:
+			return false
+	
+	return true
 
 # direction should be -1 for deceleration or 1 for acceleration
 func apply_acceleration(delta: float, direction: int, acceleration: float, top_speed: float) -> void:
