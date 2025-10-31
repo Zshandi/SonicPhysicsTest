@@ -1,8 +1,11 @@
 extends State
 class_name GroundedStateBase
 
+var GROUNDED_DEBUG := "GROUNDED"
+
 func _init(character: Character, name: String = ""):
 	super._init(character, "Grounded" + name)
+	DebugValues.category(GROUNDED_DEBUG, KEY_G)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -20,7 +23,6 @@ func _state_enter(delta: float, previous_state: State) -> void:
 		var dot = ch.velocity.dot(Vector2.RIGHT.rotated(ch.ground_angle_rad))
 		ch.ground_speed = ch.velocity.length() * sign(dot)
 		
-
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -30,6 +32,9 @@ func _physics_process(delta: float) -> void:
 	ch.update_rotation_for_ground_angle()
 	ch.snap_downward()
 
+	DebugValues.debug("effective_slope_factor", get_effective_slope_factor(), GROUNDED_DEBUG)
+	DebugValues.debug("does_slope_factor_apply", does_slope_factor_apply(), GROUNDED_DEBUG)
+	DebugValues.debug("sin(ground_angle)", sin(ch.ground_angle_rad), GROUNDED_DEBUG)
 	if not is_ground_angle_on_ceiling() and does_slope_factor_apply():
 			ch.ground_speed -= get_effective_slope_factor() * delta
 	
@@ -60,7 +65,7 @@ func get_effective_slope_factor() -> float:
 	return _get_slope_factor() * sin(ch.ground_angle_rad)
 
 func does_slope_factor_apply() -> bool:
-	return get_effective_slope_factor() > _get_friction()
+	return abs(get_effective_slope_factor()) > _get_friction()
 
 func update_ground_angle() -> void:
 	var total_normal = Vector2.ZERO
