@@ -81,26 +81,19 @@ var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
 func _ready() -> void:
 	current_state = falling_state
 
-	falling_state.add_transition(idle_state, transition_air_to_grounded)
-	jumping_state.add_transition(idle_state, transition_air_to_grounded)
+	var air_states := State.Group.new(falling_state, jumping_state)
 
-	idle_state.add_transition(jumping_state, transition_grounded_to_jumping)
-	idle_state.add_transition(falling_state, transition_grounded_to_falling)
-	idle_state.add_transition(falling_state, idle_state.should_fall)
-	
-	running_state.add_transition(jumping_state, transition_grounded_to_jumping)
-	running_state.add_transition(falling_state, transition_grounded_to_falling)
-	running_state.add_transition(falling_state, running_state.should_fall)
+	air_states.add_transition(idle_state, transition_air_to_grounded)
 
-	rolling_state.add_transition(jumping_state, transition_grounded_to_jumping)
-	rolling_state.add_transition(falling_state, transition_grounded_to_falling)
-	rolling_state.add_transition(falling_state, rolling_state.should_fall)
+	var grounded_states := State.Group.new(idle_state, running_state, rolling_state)
+	grounded_states.add_transition(jumping_state, transition_grounded_to_jumping)
+	grounded_states.add_transition(falling_state, transition_grounded_to_falling)
+	grounded_states.add_transition(falling_state, "should_fall")
+
+	grounded_states.add_transition(rolling_state, rolling_state.should_start_roll)
 
 	idle_state.add_transition(running_state, running_state.is_running)
 	running_state.add_transition(idle_state, running_state.is_not_running)
-
-	idle_state.add_transition(rolling_state, rolling_state.should_start_roll)
-	running_state.add_transition(rolling_state, rolling_state.should_start_roll)
 
 	rolling_state.add_transition(idle_state, func(): return ground_speed == 0)
 
