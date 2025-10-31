@@ -35,7 +35,7 @@ func _physics_process(delta: float) -> void:
 	ch.snap_downward()
 
 	DebugValues.debug("ground_angle", ch.ground_angle, GROUNDED_DEBUG)
-	DebugValues.debug("ground_speed", ch.ground_speed, GROUNDED_DEBUG)
+	DebugValues.debug("ground_speed", ch.ground_speed / ch.speed_scale, GROUNDED_DEBUG)
 	DebugValues.debug("effective_slope_factor", get_effective_slope_factor(), GROUNDED_DEBUG)
 	DebugValues.debug("does_slope_factor_apply", does_slope_factor_apply(), GROUNDED_DEBUG)
 	if not is_ground_angle_on_ceiling() and does_slope_factor_apply():
@@ -129,11 +129,18 @@ func should_fall() -> bool:
 
 # direction should be -1 for deceleration or 1 for acceleration
 func apply_acceleration(delta: float, direction: int, acceleration: float, top_speed: float) -> void:
+	# If accelerating, pre-check for surpassing the speed,
+	#  this way pressing in the direction of movement will never slow you down
+	if direction == 1 && abs(ch.ground_speed) >= top_speed: return
+
 	var movement_dir = ch.get_input_left_right()
 	if movement_dir != 0 and (sign(movement_dir * direction) == sign(ch.ground_speed) or \
 		(direction == 1 and ch.ground_speed == 0)):
 		ch.ground_speed += acceleration * delta * movement_dir
 		ch.ground_speed = clamp(ch.ground_speed, -top_speed, top_speed)
+		DebugValues.debug("acceleration " + str(direction), acceleration * delta * movement_dir, GROUNDED_DEBUG)
+	else:
+		DebugValues.debug("acceleration " + str(direction), 0, GROUNDED_DEBUG)
 
 # direction should be -1 for deceleration or 1 for acceleration
 func apply_friction(delta: float) -> void:
