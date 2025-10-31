@@ -18,7 +18,7 @@ func _physics_process(delta: float) -> void:
 
 func _physics_process_ground_controls(delta: float):
 	apply_acceleration(delta, -1, ch.roll_deceleration_speed, ch.top_speed)
-	apply_friction(delta, ch.roll_friction_speed)
+	apply_friction(delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
@@ -30,6 +30,9 @@ func _get_slope_factor() -> float:
 		return ch.slope_factor_rollup
 	else:
 		return ch.slope_factor_rolldown
+
+func _get_friction() -> float:
+	return ch.roll_friction_speed
 
 func should_start_roll() -> bool:
 	var result = Input.is_action_just_pressed("movement_down") and abs(ch.ground_speed) >= ch.min_rolling_start_speed
