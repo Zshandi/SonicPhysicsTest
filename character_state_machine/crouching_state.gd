@@ -1,8 +1,8 @@
 extends GroundedStateBase
-class_name IdleState
+class_name CrouchingState
 
 func _init(character: Character, name: String = ""):
-	super._init(character, ":Idle" + name)
+	super._init(character, ":Crouching" + name)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -16,10 +16,12 @@ func _state_enter(delta: float, previous_state: State) -> void:
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
+	apply_friction(delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
-	ch.sprite.play("standing")
+	ch.facing_dir_scale = ch.get_input_left_right()
+	ch.sprite.play("crouching")
 
 func _get_slope_factor() -> float:
 	return super._get_slope_factor()

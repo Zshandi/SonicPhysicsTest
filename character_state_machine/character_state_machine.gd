@@ -62,22 +62,23 @@ var facing_dir_scale := 1.0:
 
 var control_lock_timer := 0.0
 
-var falling_state := FallingState.new(self)
-var idle_state := IdleState.new(self)
-var running_state := RunningState.new(self)
-var rolling_state := RollingState.new(self)
-var rolling_air_state := RollingAirState.new(self)
-var jumping_state := JumpingState.new(self)
-
 var lock_transition_frames := 0
-
-var current_state: State
 
 @onready
 var sprite: AnimatedSprite2D = %CharacterSprite
 
 @onready
 var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
+
+var current_state: State
+
+var falling_state := FallingState.new(self)
+var idle_state := IdleState.new(self)
+var running_state := RunningState.new(self)
+var crouching_state := CrouchingState.new(self)
+var rolling_state := RollingState.new(self)
+var rolling_air_state := RollingAirState.new(self)
+var jumping_state := JumpingState.new(self)
 
 func _ready() -> void:
 	current_state = falling_state
@@ -86,12 +87,15 @@ func _ready() -> void:
 
 	air_states.add_transition(idle_state, is_on_floor)
 
-	var grounded_states := State.Group.new(idle_state, running_state, rolling_state)
+	var grounded_states := State.Group.new(idle_state, running_state, rolling_state, crouching_state)
 	grounded_states.add_transition(jumping_state, is_primary_action_pressed)
 	grounded_states.add_transition(rolling_state, rolling_state.should_start_roll)
 	
-	var standing_states := State.Group.new(idle_state, running_state)
+	var standing_states := State.Group.new(idle_state, running_state, crouching_state)
 	standing_states.add_transition(falling_state, "should_fall")
+
+	standing_states.add_transition(crouching_state, is_down_pressed)
+	crouching_state.add_transition(idle_state, is_down_released)
 
 	idle_state.add_transition(running_state, running_state.is_running)
 	running_state.add_transition(idle_state, running_state.is_not_running)
@@ -101,6 +105,12 @@ func _ready() -> void:
 
 func is_primary_action_pressed() -> bool:
 	return Input.is_action_just_pressed("action_primary")
+
+func is_down_pressed() -> bool:
+	return Input.is_action_just_pressed("movement_down")
+
+func is_down_released() -> bool:
+	return Input.is_action_just_released("movement_down")
 
 func _physics_process(delta: float) -> void:
 	transition_to_next_state(delta)
