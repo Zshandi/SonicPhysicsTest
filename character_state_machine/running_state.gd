@@ -21,7 +21,7 @@ func _physics_process_ground_controls(delta: float):
 	apply_acceleration(delta, 1, ch.acceleration_speed, ch.top_speed)
 	apply_acceleration(delta, -1, ch.deceleration_speed, ch.top_speed)
 	if ch.get_input_left_right() == 0:
-		apply_friction(delta, ch.friction_speed)
+		apply_friction(delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
@@ -30,3 +30,9 @@ func _process(_delta: float) -> void:
 
 func _get_slope_factor() -> float:
 	return super._get_slope_factor()
+
+func is_running() -> bool:
+	return abs(ch.ground_speed) > 0 or ch.get_input_left_right() != 0 or does_slope_factor_apply()
+
+func is_not_running() -> bool:
+	return not is_running()

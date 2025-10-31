@@ -30,8 +30,8 @@ func _physics_process(delta: float) -> void:
 	ch.update_rotation_for_ground_angle()
 	ch.snap_downward()
 
-	if not is_ground_angle_on_ceiling():
-		ch.ground_speed -= _get_slope_factor() * delta * sin(ch.ground_angle_rad)
+	if not is_ground_angle_on_ceiling() and does_slope_factor_apply():
+			ch.ground_speed -= get_effective_slope_factor() * delta
 	
 	if should_slip() and not ch.has_control_lock():
 		ch.ground_speed += ch.slip_speed_reduction * get_slope_dir()
@@ -45,10 +45,22 @@ func _physics_process(delta: float) -> void:
 func _physics_process_ground_controls(_delta: float):
 	pass
 
+func _get_slope_factor() -> float:
+	return ch.slope_factor_normal
+
+func _get_friction() -> float:
+	return ch.friction_speed
+
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
 	ch.facing_dir_scale = ch.get_input_left_right()
 	ch.sprite.play("standing")
+
+func get_effective_slope_factor() -> float:
+	return _get_slope_factor() * sin(ch.ground_angle_rad)
+
+func does_slope_factor_apply() -> bool:
+	return get_effective_slope_factor() > _get_friction()
 
 func update_ground_angle() -> void:
 	var total_normal = Vector2.ZERO
@@ -74,9 +86,6 @@ func is_ground_angle_on_wall() -> bool:
 	return not is_ground_angle_on_ceiling() and \
 		   not is_ground_angle_on_floor()
 
-func _get_slope_factor() -> float:
-	return ch.slope_factor_normal
-
 func get_slope_dir():
 	return -1 if ch.ground_angle < 180 else 1
 
@@ -98,9 +107,9 @@ func apply_acceleration(delta: float, direction: int, acceleration: float, top_s
 		ch.ground_speed = clamp(ch.ground_speed, -top_speed, top_speed)
 
 # direction should be -1 for deceleration or 1 for acceleration
-func apply_friction(delta: float, friction: float) -> void:
+func apply_friction(delta: float) -> void:
 	var ground_speed_sign = sign(ch.ground_speed)
-	var total_friction = ground_speed_sign * friction * delta
+	var total_friction = ground_speed_sign * _get_friction() * delta
 	ch.ground_speed -= total_friction
 	if ground_speed_sign != sign(ch.ground_speed):
 		# We stopped, don't jitter

@@ -93,19 +93,17 @@ func _ready() -> void:
 	running_state.add_transition(falling_state, running_state.should_fall)
 
 	rolling_state.add_transition(jumping_state, transition_grounded_to_jumping)
-	# rolling_state.add_transition(falling_state, transition_grounded_to_falling)
-	# rolling_state.add_transition(falling_state, rolling_state.should_fall)
+	rolling_state.add_transition(falling_state, transition_grounded_to_falling)
+	rolling_state.add_transition(falling_state, rolling_state.should_fall)
 
-	idle_state.add_transition(running_state, func(): return is_running())
-	running_state.add_transition(idle_state, func(): return not is_running())
+	idle_state.add_transition(running_state, running_state.is_running)
+	running_state.add_transition(idle_state, running_state.is_not_running)
 
 	idle_state.add_transition(rolling_state, rolling_state.should_start_roll)
 	running_state.add_transition(rolling_state, rolling_state.should_start_roll)
 
 	rolling_state.add_transition(idle_state, func(): return ground_speed == 0)
 
-func is_running() -> bool:
-	return abs(ground_speed) > 0 or get_input_left_right() != 0
 
 func transition_air_to_grounded() -> bool:
 	return is_on_floor()
