@@ -2,10 +2,12 @@ extends State
 class_name GroundedStateBase
 
 var GROUNDED_DEBUG := "GROUNDED"
+var SLIP_DEBUG := "SLIP"
 
 func _init(character: Character, name: String = ""):
 	super._init(character, "Grounded" + name)
 	DebugValues.category(GROUNDED_DEBUG, KEY_G)
+	DebugValues.category(SLIP_DEBUG, KEY_S)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -32,9 +34,10 @@ func _physics_process(delta: float) -> void:
 	ch.update_rotation_for_ground_angle()
 	ch.snap_downward()
 
+	DebugValues.debug("ground_angle", ch.ground_angle, GROUNDED_DEBUG)
+	DebugValues.debug("ground_speed", ch.ground_speed, GROUNDED_DEBUG)
 	DebugValues.debug("effective_slope_factor", get_effective_slope_factor(), GROUNDED_DEBUG)
 	DebugValues.debug("does_slope_factor_apply", does_slope_factor_apply(), GROUNDED_DEBUG)
-	DebugValues.debug("sin(ground_angle)", sin(ch.ground_angle_rad), GROUNDED_DEBUG)
 	if not is_ground_angle_on_ceiling() and does_slope_factor_apply():
 			ch.ground_speed -= get_effective_slope_factor() * delta
 	
@@ -96,8 +99,16 @@ func get_slope_dir():
 
 func should_slip() -> bool:
 	var movement_dir = ch.get_input_left_right()
+	DebugValues.debug("movement_dir", sin(movement_dir), SLIP_DEBUG)
 	var slip_conditions = abs(ch.ground_speed) < ch.slip_max_speed and ch.ground_angle_within(ch.slip_min_angle)
+	DebugValues.debug("slip_conditions", slip_conditions, SLIP_DEBUG)
+	DebugValues.debug("  abs(ch.ground_speed)", abs(ch.ground_speed), SLIP_DEBUG)
+	DebugValues.debug("  < ch.slip_max_speed", abs(ch.slip_max_speed), SLIP_DEBUG)
+	DebugValues.debug("  and ch.ground_angle_within(ch.slip_min_angle)", ch.ground_angle_within(ch.slip_min_angle), SLIP_DEBUG)
 	var going_uphill = sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0
+	DebugValues.debug("sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0", going_uphill, SLIP_DEBUG)
+	DebugValues.debug("  movement_dir", movement_dir, SLIP_DEBUG)
+	DebugValues.debug("  get_slope_dir()", get_slope_dir(), SLIP_DEBUG)
 	return slip_conditions and (going_uphill or is_ground_angle_on_ceiling())
 
 func should_fall() -> bool:

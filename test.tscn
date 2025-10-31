@@ -32,7 +32,7 @@ polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="World/Ground/StartingBucket"]
 position = Vector2(10, 0)
-polygon = PackedVector2Array(225, 442, 225, 409, 8, 261, -14, 262, -6, 439)
+polygon = PackedVector2Array(222, 442, 220, 410, 12, 260, -14, 262, -6, 439)
 
 [node name="RightLoop" type="StaticBody2D" parent="World/Ground"]
 
