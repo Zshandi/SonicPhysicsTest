@@ -34,7 +34,7 @@ func _state_enter(delta: float, previous_state: State) -> void:
 					angle += 2 * PI
 				ch.ground_angle_rad = angle
 				ch.update_rotation_for_ground_angle()
-				ch.snap_downward()
+				ch.snap_downward(15)
 
 		var ground_speed = get_ground_speed_for(ch.velocity, ch.ground_angle_rad)
 		ch.ground_speed = ground_speed
@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 
 	update_ground_angle()
 	ch.update_rotation_for_ground_angle()
-	ch.snap_downward()
+	ch.snap_downward(15)
 
 	DebugValues.debug("ground_angle", ch.ground_angle, GROUNDED_DEBUG)
 	DebugValues.debug("ground_speed", ch.ground_speed / ch.speed_scale, GROUNDED_DEBUG)

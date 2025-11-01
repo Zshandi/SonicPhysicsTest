@@ -184,7 +184,14 @@ func snap_downward(distance_to_snap:=1000):
 	var direction := Vector2.DOWN.rotated(rotation)
 	var snap_velocity := direction * distance_to_snap
 
+	var exoected_result := move_and_collide(snap_velocity, true)
+
+	if exoected_result == null or exoected_result.get_remainder().length() == 0:
+		# There would not be a collision, so don't bother snapping
+		return
+	
 	move_and_collide(snap_velocity)
+
 
 func ground_angle_within(min_angle: float) -> bool:
 	var max_angle := 360 - min_angle
