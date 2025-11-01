@@ -19,4 +19,4 @@ func _physics_process(delta: float) -> void:
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
 	ch.facing_dir_scale = ch.velocity.x
-	ch.sprite.play("falling")
+	ch.sprite.play("rolling")
