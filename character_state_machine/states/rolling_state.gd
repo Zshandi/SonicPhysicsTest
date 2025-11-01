@@ -34,6 +34,9 @@ func _get_slope_factor() -> float:
 func _get_friction() -> float:
 	return ch.roll_friction_speed
 
+func should_stop_roll() -> bool:
+	return ch.ground_speed == 0 and not does_slope_factor_apply()
+
 func should_start_roll() -> bool:
 	var result = Input.is_action_just_pressed("movement_down") and \
 		(abs(ch.ground_speed) >= ch.min_rolling_start_speed or does_slope_factor_apply())

@@ -102,7 +102,7 @@ func _ready() -> void:
 	idle_state.add_transition(running_state, running_state.is_running)
 	running_state.add_transition(idle_state, running_state.is_not_running)
 
-	rolling_state.add_transition(idle_state, func(): return ground_speed == 0)
+	rolling_state.add_transition(idle_state, rolling_state.should_stop_roll)
 	rolling_state.add_transition(rolling_air_state, rolling_state.should_fall)
 	rolling_air_state.add_transition(rolling_state, is_on_floor)
 	rolling_air_state.add_transition(rolling_state, rolling_state.should_land_on_wall_or_ceiling)
