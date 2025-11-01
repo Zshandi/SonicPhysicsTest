@@ -123,23 +123,24 @@ floor_constant_speed = true
 script = ExtResource("1_glpr6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
 shape = SubResource("RectangleShape2D_pjt0s")
 
 [node name="GroundSensor1" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(13, 23)
+position = Vector2(13, 13)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor2" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-13, 23)
+position = Vector2(-13, 13)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor3" type="RayCast2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, 23)
+position = Vector2(0, 13)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
@@ -147,7 +148,7 @@ script = ExtResource("4_wfnr8")
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-1, 1)
+position = Vector2(-1, -9)
 scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_yxww1")
 animation = &"standing"
