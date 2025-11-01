@@ -26,13 +26,10 @@ func _state_enter(delta: float, previous_state: State) -> void:
 			update_ground_angle()
 		else:
 			# We landed on the wall or ceiling
-			var last_collision := ch.get_last_slide_collision()
-			assert(last_collision != null)
-			if last_collision != null:
-				var angle = ch.get_last_slide_collision().get_normal().angle_to(Vector2.UP)
-				while angle < 0:
-					angle += 2 * PI
-				ch.ground_angle_rad = angle
+			var angle_rad = get_last_slide_collision_angle_rad()
+			assert(not is_nan(angle_rad))
+			if not is_nan(angle_rad):
+				ch.ground_angle_rad = angle_rad
 				ch.update_rotation_for_ground_angle()
 				ch.snap_downward(15)
 
@@ -53,9 +50,7 @@ func _physics_process(delta: float) -> void:
 	DebugValues.debug("effective_slope_factor", get_effective_slope_factor(), GROUNDED_DEBUG)
 	DebugValues.debug("does_slope_factor_apply", does_slope_factor_apply(), GROUNDED_DEBUG)
 	if ch.get_last_slide_collision() != null:
-		var angle = ch.get_last_slide_collision().get_normal().angle_to(Vector2.UP)
-		while angle < 0:
-			angle += 2 * PI
+		var angle = get_last_slide_collision_angle_rad()
 		DebugValues.debug("last_collision_angle", angle, GROUNDED_DEBUG)
 	else:
 		DebugValues.debug("last_collision_angle", "null", GROUNDED_DEBUG)
@@ -110,10 +105,10 @@ func update_ground_angle() -> void:
 			ch.ground_angle += 360
 
 func is_ground_angle_on_ceiling() -> bool:
-	return ch.ground_angle_within(ch.ceiling_min_angle)
+	return ground_angle_within(ch.ceiling_min_angle, ch.ground_angle)
 
 func is_ground_angle_on_floor() -> bool:
-	return not ch.ground_angle_within(ch.floor_max_angle)
+	return not ground_angle_within(ch.floor_max_angle, ch.ground_angle)
 
 func is_ground_angle_on_wall() -> bool:
 	return not is_ground_angle_on_ceiling() and \
@@ -129,14 +124,12 @@ func should_land_on_wall_or_ceiling() -> bool:
 	
 	if ch.velocity.y > 0: return false
 	
-	var last_collision := ch.get_last_slide_collision()
-	if last_collision == null:
-		return false
+	var potential_ground_angle_rad := get_last_slide_collision_angle_rad()
+	if is_nan(potential_ground_angle_rad): return false
 	
-	var potential_ground_angle := last_collision.get_angle()
-	var potential_ground_speed := get_ground_speed_for(ch.velocity, potential_ground_angle)
+	var potential_ground_speed := get_ground_speed_for(ch.velocity, potential_ground_angle_rad)
 
-	return not check_slip_conditions_for(potential_ground_speed)
+	return not check_slip_conditions_for(potential_ground_speed, ch.slip_max_speed * 1.5, rad_to_deg(potential_ground_angle_rad))
 
 func get_ground_speed_for(velocity: Vector2, ground_angle_rad: float) -> float:
 	var ground_right_dir = Vector2.RIGHT.rotated(-ground_angle_rad)
@@ -144,25 +137,30 @@ func get_ground_speed_for(velocity: Vector2, ground_angle_rad: float) -> float:
 	var result = velocity.length() * sign(dot)
 	return result
 
-func check_slip_conditions_for(ground_speed: float):
-	return abs(ch.ground_speed) < ch.slip_max_speed and ch.ground_angle_within(ch.slip_min_angle)
+func check_slip_conditions_for(ground_speed: float, slip_max_speed: float, ground_angle: float) -> bool:
+	return abs(ground_speed) < slip_max_speed and ground_angle_within(ch.slip_min_angle, ground_angle)
 
 func should_slip() -> bool:
 	var movement_dir = ch.get_input_left_right()
 	DebugValues.debug("movement_dir", sin(movement_dir), SLIP_DEBUG)
-	var slip_conditions = check_slip_conditions_for(ch.ground_speed)
+	var slip_conditions = check_slip_conditions_for(ch.ground_speed, ch.slip_max_speed, ch.ground_angle)
+	if not slip_conditions:
+		return false
 	DebugValues.debug("slip_conditions", slip_conditions, SLIP_DEBUG)
 	DebugValues.debug("  abs(ch.ground_speed)", abs(ch.ground_speed), SLIP_DEBUG)
 	DebugValues.debug("  < ch.slip_max_speed", abs(ch.slip_max_speed), SLIP_DEBUG)
-	DebugValues.debug("  and ch.ground_angle_within(ch.slip_min_angle)", ch.ground_angle_within(ch.slip_min_angle), SLIP_DEBUG)
+	DebugValues.debug("  and ground_angle_within(ch.slip_min_angle)", ground_angle_within(ch.slip_min_angle, ch.ground_angle), SLIP_DEBUG)
 	var going_uphill = sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0
 	DebugValues.debug("sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0", going_uphill, SLIP_DEBUG)
 	DebugValues.debug("  movement_dir", movement_dir, SLIP_DEBUG)
 	DebugValues.debug("  get_slope_dir()", get_slope_dir(), SLIP_DEBUG)
-	return slip_conditions and (going_uphill or is_ground_angle_on_ceiling())
+	if not (going_uphill or is_ground_angle_on_ceiling()):
+		return false
+	check_slip_conditions_for(ch.ground_speed, ch.slip_max_speed, ch.ground_angle)
+	return true
 
 func should_fall() -> bool:
-	if should_slip() and ch.ground_angle_within(ch.fall_min_angle):
+	if should_slip() and ground_angle_within(ch.fall_min_angle, ch.ground_angle):
 		return true
 	
 	if ch.is_on_floor(): return false
@@ -196,3 +194,13 @@ func apply_friction(delta: float) -> void:
 	if ground_speed_sign != sign(ch.ground_speed):
 		# We stopped, don't jitter
 		ch.ground_speed = 0
+
+func ground_angle_within(min_angle: float, ground_angle: float) -> bool:
+	var max_angle := 360 - min_angle
+	return ground_angle >= min_angle and ground_angle <= max_angle
+
+func get_last_slide_collision_angle_rad() -> float:
+	if ch.get_last_slide_collision() == null: return NAN
+	var angle = fmod(ch.get_last_slide_collision().get_normal().angle_to(Vector2.UP), 2 * PI)
+	if angle < 0: angle += 2 * PI
+	return angle

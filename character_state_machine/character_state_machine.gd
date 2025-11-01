@@ -94,7 +94,7 @@ func _ready() -> void:
 	grounded_states.add_transition(rolling_state, rolling_state.should_start_roll)
 	
 	var standing_states := State.Group.new(idle_state, running_state, crouching_state)
-	standing_states.add_transition(falling_state, "should_fall")
+	standing_states.add_transition(falling_state, running_state.should_fall)
 
 	standing_states.add_transition(crouching_state, is_down_pressed)
 	crouching_state.add_transition(idle_state, is_down_released)
@@ -191,8 +191,3 @@ func snap_downward(distance_to_snap:=1000):
 		return
 	
 	move_and_collide(snap_velocity)
-
-
-func ground_angle_within(min_angle: float) -> bool:
-	var max_angle := 360 - min_angle
-	return ground_angle >= min_angle and ground_angle <= max_angle

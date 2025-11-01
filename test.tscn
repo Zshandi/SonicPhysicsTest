@@ -110,11 +110,6 @@ polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.
 position = Vector2(-602, 417)
 shape = SubResource("RectangleShape2D_8uh7m")
 
-[node name="CollisionShape2D7" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
-position = Vector2(-609, 505)
-scale = Vector2(1, 0.5)
-shape = SubResource("RectangleShape2D_8uh7m")
-
 [node name="CollisionShape2D6" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
 position = Vector2(-517, 312)
 shape = SubResource("RectangleShape2D_8uh7m")
@@ -138,12 +133,6 @@ polygon = PackedVector2Array(728, 406, 1004, 407, 1002, 155, 961, 155, 961, 176.
 position = Vector2(-1011, 417)
 rotation = -3.14159
 scale = Vector2(1, -1)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="World/Ground/LeftLoop"]
-position = Vector2(-1002, 501)
-rotation = -3.14159
-scale = Vector2(1, 0.5)
 shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
