@@ -64,7 +64,12 @@ position = Vector2(-281, 280)
 shape = SubResource("RectangleShape2D_mf4mk")
 
 [node name="CollisionShape2D12" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
-position = Vector2(31, -254)
+position = Vector2(44, -270)
+shape = SubResource("RectangleShape2D_mf4mk")
+
+[node name="CollisionShape2D13" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-785, -224)
+rotation = -0.15139
 shape = SubResource("RectangleShape2D_mf4mk")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
@@ -75,21 +80,14 @@ shape = SubResource("RectangleShape2D_8uh7m")
 position = Vector2(-1611, 125)
 shape = SubResource("RectangleShape2D_8uh7m")
 
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
+position = Vector2(-1792, -34)
+rotation = 1.34206
+shape = SubResource("RectangleShape2D_8uh7m")
+
 [node name="CollisionShape2D9" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
-position = Vector2(-1395, -136)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D10" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
-position = Vector2(-951, -215)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D11" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
-position = Vector2(-504, -252)
-shape = SubResource("RectangleShape2D_8uh7m")
-
-[node name="CollisionShape2D8" type="CollisionShape2D" parent="World/Ground/LeftPlatforms"]
-position = Vector2(-1831, -98)
-rotation = 1.57079
+position = Vector2(-1432, -106)
+rotation = -0.282358
 shape = SubResource("RectangleShape2D_8uh7m")
 
 [node name="LeftLoop" type="StaticBody2D" parent="World/Ground"]

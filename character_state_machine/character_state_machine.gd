@@ -51,8 +51,9 @@ var ground_speed := 0.0
 var ground_angle_rad := 0.0
 var ground_angle := 0.0:
 	set(value):
-		ground_angle = value
 		ground_angle_rad = deg_to_rad(value)
+	get:
+		return rad_to_deg(ground_angle_rad)
 
 var facing_dir_scale := 1.0:
 	set(value):
@@ -86,6 +87,7 @@ func _ready() -> void:
 	var air_states := State.Group.new(falling_state, jumping_state)
 
 	air_states.add_transition(idle_state, is_on_floor)
+	air_states.add_transition(running_state, running_state.should_land_on_wall_or_ceiling)
 
 	var grounded_states := State.Group.new(idle_state, running_state, rolling_state, crouching_state)
 	grounded_states.add_transition(jumping_state, is_primary_action_pressed)
@@ -102,6 +104,8 @@ func _ready() -> void:
 
 	rolling_state.add_transition(idle_state, func(): return ground_speed == 0)
 	rolling_state.add_transition(rolling_air_state, rolling_state.should_fall)
+	rolling_air_state.add_transition(rolling_state, is_on_floor)
+	rolling_air_state.add_transition(rolling_state, rolling_state.should_land_on_wall_or_ceiling)
 
 func is_primary_action_pressed() -> bool:
 	return Input.is_action_just_pressed("action_primary")
@@ -164,8 +168,6 @@ func get_input_left_right() -> float:
 	var result = 0
 	if Input.is_action_pressed("ui_left"): result -= 1
 	if Input.is_action_pressed("ui_right"): result += 1
-	if result != 0:
-		print_debug("left/right: ", result)
 	return result
 
 func count_control_lock(delta: float) -> void:
