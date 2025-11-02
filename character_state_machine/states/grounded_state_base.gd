@@ -3,11 +3,13 @@ class_name GroundedStateBase
 
 var GROUNDED_DEBUG := "GROUNDED"
 var SLIP_DEBUG := "SLIP"
+var JITTER_DEBUG := "JITTER"
 
 func _init(character: Character, name: String = ""):
 	super._init(character, "Grounded" + name)
 	DebugValues.category(GROUNDED_DEBUG, KEY_G)
 	DebugValues.category(SLIP_DEBUG, KEY_S)
+	DebugValues.category(JITTER_DEBUG, KEY_J)
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
@@ -103,6 +105,29 @@ func update_ground_angle() -> void:
 		ch.ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
 		if ch.ground_angle < 0:
 			ch.ground_angle += 360
+		
+		reduce_ground_angle_jitter()
+
+var prev_ground_angle_normals := [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+func reduce_ground_angle_jitter():
+	var current_ground_angle_normal := Vector2.UP.rotated(ch.ground_angle_rad)
+	prev_ground_angle_normals.push_back(current_ground_angle_normal)
+	
+	var current_angle_change: float = prev_ground_angle_normals[-1].angle_to(prev_ground_angle_normals[ - 2])
+	var prev_angle_change: float = prev_ground_angle_normals[-2].angle_to(prev_ground_angle_normals[ - 3])
+	
+	var current_angle := ch.ground_angle
+	DebugValues.debug("current_angle_change", current_angle_change, JITTER_DEBUG)
+	DebugValues.debug("prev_angle_change", prev_angle_change, JITTER_DEBUG)
+	DebugValues.debug("unchanged ground_angle", current_angle, JITTER_DEBUG)
+	DebugValues.debug("change to ground_angle", 0, JITTER_DEBUG)
+
+	if sign(current_angle_change) != sign(prev_angle_change):
+		var sum: Vector2 = prev_ground_angle_normals.reduce(func(accum, current): return accum + current, Vector2.ZERO)
+		var avg_normal := sum / len(prev_ground_angle_normals)
+		ch.ground_angle_rad = Vector2.UP.angle_to(avg_normal)
+		DebugValues.debug("change to ground_angle", rad_to_deg(abs(avg_normal.angle_to(current_ground_angle_normal))), JITTER_DEBUG)
+	prev_ground_angle_normals.pop_front()
 
 func is_ground_angle_on_ceiling() -> bool:
 	return ground_angle_within(ch.ceiling_min_angle, ch.ground_angle)
