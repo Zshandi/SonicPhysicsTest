@@ -48,7 +48,11 @@ var control_lock_start := 0.5
 
 var ground_speed := 0.0
 
-var ground_angle_rad := 0.0
+var ground_angle_rad := 0.0:
+	set(value):
+		# Ensure it's always between 0 and 2*PI, without changing the angle
+		ground_angle_rad = fmod(value, 2 * PI)
+		if ground_angle_rad < 0: ground_angle_rad += 2 * PI
 var ground_angle := 0.0:
 	set(value):
 		ground_angle_rad = deg_to_rad(value)
@@ -69,7 +73,7 @@ var lock_transition_frames := 0
 var sprite: AnimatedSprite2D = %CharacterSprite
 
 @onready
-var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3]
+var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3, %GroundSensor4, %GroundSensor5]
 
 var current_state: State
 

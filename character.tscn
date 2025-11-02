@@ -144,6 +144,18 @@ position = Vector2(0, 13)
 target_position = Vector2(0, 30)
 script = ExtResource("4_wfnr8")
 
+[node name="GroundSensor4" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(6.5, 13)
+target_position = Vector2(0, 30)
+script = ExtResource("4_wfnr8")
+
+[node name="GroundSensor5" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-6.5, 13)
+target_position = Vector2(0, 30)
+script = ExtResource("4_wfnr8")
+
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="."]

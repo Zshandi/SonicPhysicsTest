@@ -21,6 +21,7 @@ func _state_exit(delta: float, next_state: State) -> void:
 # Called when the state is transitioned to from another state
 func _state_enter(delta: float, previous_state: State) -> void:
 	super._state_enter(delta, previous_state)
+	prev_ground_angle_normals = [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
 
 	if not previous_state is GroundedStateBase:
 		if ch.is_on_floor():
@@ -99,16 +100,14 @@ func update_ground_angle() -> void:
 		if sensor.is_colliding():
 			total_normal += sensor.get_collision_normal()
 			total_normal_count += 1
-	
 	if total_normal_count > 0:
 		var avg_normal = total_normal / total_normal_count
 		ch.ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
 		if ch.ground_angle < 0:
 			ch.ground_angle += 360
-		
 		reduce_ground_angle_jitter()
 
-var prev_ground_angle_normals := [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO]
+var prev_ground_angle_normals: Array[Vector2]
 func reduce_ground_angle_jitter():
 	var current_ground_angle_normal := Vector2.UP.rotated(ch.ground_angle_rad)
 	prev_ground_angle_normals.push_back(current_ground_angle_normal)
