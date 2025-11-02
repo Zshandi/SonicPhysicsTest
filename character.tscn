@@ -129,31 +129,13 @@ shape = SubResource("RectangleShape2D_pjt0s")
 [node name="GroundSensor1" type="RayCast2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(13, 13)
-target_position = Vector2(0, 30)
+target_position = Vector2(0, 15)
 script = ExtResource("4_wfnr8")
 
 [node name="GroundSensor2" type="RayCast2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(-13, 13)
-target_position = Vector2(0, 30)
-script = ExtResource("4_wfnr8")
-
-[node name="GroundSensor3" type="RayCast2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(0, 13)
-target_position = Vector2(0, 30)
-script = ExtResource("4_wfnr8")
-
-[node name="GroundSensor4" type="RayCast2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(6.5, 13)
-target_position = Vector2(0, 30)
-script = ExtResource("4_wfnr8")
-
-[node name="GroundSensor5" type="RayCast2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(-6.5, 13)
-target_position = Vector2(0, 30)
+target_position = Vector2(0, 15)
 script = ExtResource("4_wfnr8")
 
 [node name="Camera2D" type="Camera2D" parent="."]

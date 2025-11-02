@@ -73,7 +73,22 @@ var lock_transition_frames := 0
 var sprite: AnimatedSprite2D = %CharacterSprite
 
 @onready
-var ground_sensors := [%GroundSensor1, %GroundSensor2, %GroundSensor3, %GroundSensor4, %GroundSensor5]
+var ground_sensors := [%GroundSensor1, %GroundSensor2]
+
+func populate_sensors(num_sensors: int):
+	if num_sensors <= 2: return
+
+	var starting_position: Vector2 = %GroundSensor1.position
+	var ending_position: Vector2 = %GroundSensor2.position
+	var delta := 1.0 / num_sensors
+	for i in num_sensors - 2:
+		var progression := (i + 1) * delta
+		var new_position: Vector2 = lerp(starting_position, ending_position, progression)
+		var new_sensor := %GroundSensor1.duplicate()
+		new_sensor.position = new_position
+		add_child(new_sensor)
+		ground_sensors.push_back(new_sensor)
+
 
 var current_state: State
 
@@ -86,6 +101,8 @@ var rolling_air_state := RollingAirState.new(self)
 var jumping_state := JumpingState.new(self)
 
 func _ready() -> void:
+	populate_sensors(15)
+
 	current_state = falling_state
 
 	var air_states := State.Group.new(falling_state, jumping_state)
