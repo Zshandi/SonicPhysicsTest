@@ -73,7 +73,7 @@ var lock_transition_frames := 0
 var sprite: AnimatedSprite2D = %CharacterSprite
 
 @onready
-var ground_sensors := [%GroundSensor1, %GroundSensor2]
+var ground_sensors: Array[Sensor] = [%GroundSensor1, %GroundSensor2]
 
 func populate_sensors(num_sensors: int):
 	if num_sensors <= 2: return
