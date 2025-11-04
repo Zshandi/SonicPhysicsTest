@@ -92,6 +92,7 @@ func does_slope_factor_apply() -> bool:
 func get_reasonable_sensors(sensors: Array[Sensor], variance: float = 2) -> Array[Sensor]:
 	# Only consider colliding sensors
 	var colliding_sensors: Array[Sensor] = sensors.filter(func(sensor): return sensor.is_colliding())
+	if len(colliding_sensors) == 0: return []
 
 	# Arbitrarily choose the first normal to compare the others to for variance
 	# Note that this has no impact or implication on the average, which will
