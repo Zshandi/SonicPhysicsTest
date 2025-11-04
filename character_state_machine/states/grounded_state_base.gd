@@ -130,12 +130,9 @@ func get_acceptable_range(dataset: Array, variance: float = 2) -> Array[float]:
 
 
 func update_ground_angle() -> void:
-	# TODO: If there is a slightly less than 90 degree cliff, it should behave the same as 90 degrees,
-	#  however this currently will detect the cliff with one of the sensors and start turning sonic,
-	#  and this behavior is dependent on the current speed (i.e. if the frame lands the sensor on the hill)
-	# For now, we can just make sure not to add any nearly 90 degree cliffs, but we should fix this...
 	var total_normal = Vector2.ZERO
 	var total_normal_count = 0
+	# The get_reasonable_sensors deals with removing outliers in case of nearly 90 degree angles
 	for sensor in get_reasonable_sensors(ch.ground_sensors, 15):
 		total_normal += sensor.get_collision_normal()
 		total_normal_count += 1
