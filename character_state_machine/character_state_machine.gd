@@ -96,6 +96,7 @@ var falling_state := FallingState.new(self)
 var idle_state := IdleState.new(self)
 var running_state := RunningState.new(self)
 var crouching_state := CrouchingState.new(self)
+var spindash_state := SpindashState.new(self)
 var rolling_state := RollingState.new(self)
 var rolling_air_state := RollingAirState.new(self)
 var jumping_state := JumpingState.new(self)
@@ -109,10 +110,6 @@ func _ready() -> void:
 
 	air_states.add_transition(idle_state, is_on_floor)
 	air_states.add_transition(running_state, running_state.should_land_on_wall_or_ceiling)
-
-	var grounded_states := State.Group.new(idle_state, running_state, rolling_state, crouching_state)
-	grounded_states.add_transition(jumping_state, is_primary_action_pressed)
-	grounded_states.add_transition(rolling_state, rolling_state.should_start_roll)
 	
 	var standing_states := State.Group.new(idle_state, running_state, crouching_state)
 	standing_states.add_transition(falling_state, running_state.should_fall)
@@ -120,8 +117,15 @@ func _ready() -> void:
 	standing_states.add_transition(crouching_state, is_down_pressed)
 	crouching_state.add_transition(idle_state, is_down_released)
 
+	crouching_state.add_transition(spindash_state, is_primary_action_pressed)
+	spindash_state.add_transition(rolling_state, is_down_released)
+
 	idle_state.add_transition(running_state, running_state.is_running)
 	running_state.add_transition(idle_state, running_state.is_not_running)
+	
+	var grounded_states := State.Group.new(idle_state, running_state, rolling_state, crouching_state)
+	grounded_states.add_transition(jumping_state, is_primary_action_pressed)
+	grounded_states.add_transition(rolling_state, rolling_state.should_start_roll)
 
 	rolling_state.add_transition(idle_state, rolling_state.should_stop_roll)
 	rolling_state.add_transition(rolling_air_state, rolling_state.should_fall)
