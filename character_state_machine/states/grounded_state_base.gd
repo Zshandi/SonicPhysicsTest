@@ -89,58 +89,30 @@ func get_effective_slope_factor() -> float:
 func does_slope_factor_apply() -> bool:
 	return abs(get_effective_slope_factor()) > _get_friction()
 
-func get_reasonable_sensors(sensors: Array[Sensor], variance: float = 2) -> Array[Sensor]:
-	# Only consider colliding sensors
-	var colliding_sensors: Array[Sensor] = sensors.filter(func(sensor): return sensor.is_colliding())
-	if len(colliding_sensors) == 0: return []
-
-	# Arbitrarily choose the first normal to compare the others to for variance
-	# Note that this has no impact or implication on the average, which will
-	#  be calculated as the average difference from this normal
-	var first_normal := colliding_sensors[0].get_collision_normal()
-
-	var angles_from_first: Array = colliding_sensors.map(func(sensor):
-		return sensor.get_collision_normal().angle_to(first_normal)
-		)
+func get_reasonable_sensors(sensors: Array[Sensor], angle_rad: float) -> Array[Sensor]:
+	var acceptable_sensors: Array[Sensor] = []
 	
-	var acceptable_angle_range := get_acceptable_range(angles_from_first, variance)
-	var min_angle = min(acceptable_angle_range[0], acceptable_angle_range[1])
-	var max_angle = max(acceptable_angle_range[0], acceptable_angle_range[1])
+	var ground_normal = Vector2.UP.rotated(-ch.ground_angle_rad)
 
-	var acceptable_sensors: Array[Sensor] = sensors.filter(func(sensor):
-		var angle=sensor.get_collision_normal().angle_to(first_normal)
-		return angle >= min_angle and angle <= max_angle
-		)
-	
+	for sensor in sensors:
+		var angle = sensor.get_collision_normal().angle_to(ground_normal)
+		if abs(angle) < angle_rad:
+			acceptable_sensors.push_back(sensor)
+
 	return acceptable_sensors
-
-func get_acceptable_range(dataset: Array, variance: float = 2) -> Array[float]:
-	var sum := func(total, current): return total + current
-	# Step one: find average / mean
-	var average: float = dataset.reduce(sum, 0) / len(dataset)
-
-	# Step two: Get the square of the difference from the mean
-	var squared_distances := dataset.map(func(value): return (value - average) * (value - average))
-
-	# Step three: Sum and divide by total data points
-	var standard_deviation: float = squared_distances.reduce(sum, 0) / len(dataset)
-	
-	# Step four: Subtract and add the SD (scaled by variance) to the average to get the range
-	return [average - standard_deviation * variance, average + standard_deviation * variance]
 
 
 func update_ground_angle() -> void:
 	var total_normal = Vector2.ZERO
 	var total_normal_count = 0
 	# The get_reasonable_sensors deals with removing outliers in case of nearly 90 degree angles
-	for sensor in get_reasonable_sensors(ch.ground_sensors, 15):
+	for sensor in get_reasonable_sensors(ch.ground_sensors, deg_to_rad(60)):
 		total_normal += sensor.get_collision_normal()
 		total_normal_count += 1
+	DebugValues.debug("reasonable_sensor_count", total_normal_count, JITTER_DEBUG)
 	if total_normal_count > 0:
 		var avg_normal = total_normal / total_normal_count
-		ch.ground_angle = rad_to_deg(avg_normal.angle_to(Vector2.UP))
-		if ch.ground_angle < 0:
-			ch.ground_angle += 360
+		ch.ground_angle_rad = avg_normal.angle_to(Vector2.UP)
 		reduce_ground_angle_jitter()
 
 var prev_ground_angle_normals: Array[Vector2]

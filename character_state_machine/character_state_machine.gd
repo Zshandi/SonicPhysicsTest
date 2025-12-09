@@ -4,7 +4,8 @@ class_name Character
 # Constant factors
 
 var framerate := 60
-var scaling_factor := 1.5
+var scaling_factor := 0.8
+
 var speed_scale := framerate * scaling_factor
 var acceleration_scale := framerate * framerate * scaling_factor
 
