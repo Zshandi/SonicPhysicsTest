@@ -9,40 +9,6 @@ var scaling_factor := 0.8
 var speed_scale := framerate * scaling_factor
 var acceleration_scale := framerate * framerate * scaling_factor
 
-# Settings variables
-
-var top_speed := 6 * speed_scale
-
-var jump_speed := 6.5 * speed_scale
-var jump_stop_speed := 4 * speed_scale
-
-var acceleration_speed := 0.046875 * acceleration_scale
-var deceleration_speed := 0.5 * acceleration_scale
-var friction_speed := 0.046875 * acceleration_scale
-
-var roll_friction_speed := 0.0234375 * acceleration_scale
-var roll_deceleration_speed := 0.125 * acceleration_scale
-var top_speed_rolling := 16 * speed_scale
-var min_rolling_start_speed := 1 * speed_scale
-
-var slope_factor_normal := 0.125 * acceleration_scale
-var slope_factor_rollup := 0.078125 * acceleration_scale
-var slope_factor_rolldown := 0.3125 * acceleration_scale
-
-var air_acceleration := 0.09375 * acceleration_scale
-
-var gravity_force := 0.21875 * acceleration_scale
-var top_falling_speed := 16 * speed_scale
-
-var ground_distance := 5
-
-var wall_min_angle := 46
-var ceiling_min_angle := 135
-
-var slip_max_speed := 2.5 * speed_scale
-var slip_speed_reduction := 0.5 * speed_scale
-var slip_min_angle := 35
-var fall_min_angle := 69
 var control_lock_start := 0.5
 
 # State variables

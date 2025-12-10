@@ -1,6 +1,23 @@
 extends State
 class_name GroundedStateBase
 
+var top_speed := 6 * speed_scale
+
+var acceleration_speed := 0.046875 * acceleration_scale
+var deceleration_speed := 0.5 * acceleration_scale
+var friction_speed := 0.046875 * acceleration_scale
+
+var slope_factor := 0.125 * acceleration_scale
+
+var wall_min_angle := 46
+var ceiling_min_angle := 135
+
+var slip_max_speed := 2.5 * speed_scale
+var slip_speed_reduction := 0.5 * speed_scale
+var slip_min_angle := 35
+var fall_min_angle := 69
+
+
 var GROUNDED_DEBUG := "GROUNDED"
 var SLIP_DEBUG := "SLIP"
 var JITTER_DEBUG := "JITTER"
@@ -61,7 +78,7 @@ func _physics_process(delta: float) -> void:
 			ch.ground_speed -= get_effective_slope_factor() * delta
 	
 	if should_slip() and not ch.has_control_lock():
-		ch.ground_speed += ch.slip_speed_reduction * get_slope_dir()
+		ch.ground_speed += slip_speed_reduction * get_slope_dir()
 		ch.start_control_lock()
 	
 	_physics_process_ground_controls(delta)
@@ -73,10 +90,10 @@ func _physics_process_ground_controls(_delta: float):
 	pass
 
 func _get_slope_factor() -> float:
-	return ch.slope_factor_normal
+	return slope_factor
 
 func _get_friction() -> float:
-	return ch.friction_speed
+	return friction_speed
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
@@ -137,10 +154,10 @@ func reduce_ground_angle_jitter():
 	prev_ground_angle_normals.pop_front()
 
 func is_ground_angle_on_ceiling() -> bool:
-	return ground_angle_within(ch.ceiling_min_angle, ch.ground_angle)
+	return ground_angle_within(ceiling_min_angle, ch.ground_angle)
 
 func is_ground_angle_on_floor() -> bool:
-	return not ground_angle_within(ch.floor_max_angle, ch.ground_angle)
+	return not ground_angle_within(wall_min_angle, ch.ground_angle)
 
 func is_ground_angle_on_wall() -> bool:
 	return not is_ground_angle_on_ceiling() and \
@@ -161,7 +178,7 @@ func should_land_on_wall_or_ceiling() -> bool:
 	
 	var potential_ground_speed := get_ground_speed_for(ch.velocity, potential_ground_angle_rad)
 
-	return not check_slip_conditions_for(potential_ground_speed, ch.slip_max_speed * 1.5, rad_to_deg(potential_ground_angle_rad))
+	return not check_slip_conditions_for(potential_ground_speed, slip_max_speed * 1.5, rad_to_deg(potential_ground_angle_rad))
 
 func get_ground_speed_for(velocity: Vector2, ground_angle_rad: float) -> float:
 	var ground_right_dir = Vector2.RIGHT.rotated(-ground_angle_rad)
@@ -169,30 +186,30 @@ func get_ground_speed_for(velocity: Vector2, ground_angle_rad: float) -> float:
 	var result = velocity.length() * sign(dot)
 	return result
 
-func check_slip_conditions_for(ground_speed: float, slip_max_speed: float, ground_angle: float) -> bool:
-	return abs(ground_speed) < slip_max_speed and ground_angle_within(ch.slip_min_angle, ground_angle)
+func check_slip_conditions_for(ground_speed: float, _slip_max_speed: float, ground_angle: float) -> bool:
+	return abs(ground_speed) < _slip_max_speed and ground_angle_within(slip_min_angle, ground_angle)
 
 func should_slip() -> bool:
 	var movement_dir = ch.get_input_left_right()
 	DebugValues.debug("movement_dir", sin(movement_dir), SLIP_DEBUG)
-	var slip_conditions = check_slip_conditions_for(ch.ground_speed, ch.slip_max_speed, ch.ground_angle)
+	var slip_conditions = check_slip_conditions_for(ch.ground_speed, slip_max_speed, ch.ground_angle)
 	if not slip_conditions:
 		return false
 	DebugValues.debug("slip_conditions", slip_conditions, SLIP_DEBUG)
 	DebugValues.debug("  abs(ch.ground_speed)", abs(ch.ground_speed), SLIP_DEBUG)
-	DebugValues.debug("  < ch.slip_max_speed", abs(ch.slip_max_speed), SLIP_DEBUG)
-	DebugValues.debug("  and ground_angle_within(ch.slip_min_angle)", ground_angle_within(ch.slip_min_angle, ch.ground_angle), SLIP_DEBUG)
+	DebugValues.debug("  < slip_max_speed", abs(slip_max_speed), SLIP_DEBUG)
+	DebugValues.debug("  and ground_angle_within(slip_min_angle)", ground_angle_within(slip_min_angle, ch.ground_angle), SLIP_DEBUG)
 	var going_uphill = sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0
 	DebugValues.debug("sign(movement_dir) != sign(get_slope_dir()) or movement_dir == 0", going_uphill, SLIP_DEBUG)
 	DebugValues.debug("  movement_dir", movement_dir, SLIP_DEBUG)
 	DebugValues.debug("  get_slope_dir()", get_slope_dir(), SLIP_DEBUG)
 	if not (going_uphill or is_ground_angle_on_ceiling()):
 		return false
-	check_slip_conditions_for(ch.ground_speed, ch.slip_max_speed, ch.ground_angle)
+	check_slip_conditions_for(ch.ground_speed, slip_max_speed, ch.ground_angle)
 	return true
 
 func should_fall() -> bool:
-	if should_slip() and ground_angle_within(ch.fall_min_angle, ch.ground_angle):
+	if should_slip() and ground_angle_within(fall_min_angle, ch.ground_angle):
 		return true
 	
 	if ch.is_on_floor(): return false

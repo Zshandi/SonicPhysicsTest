@@ -18,8 +18,8 @@ func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 
 func _physics_process_ground_controls(delta: float):
-	apply_acceleration(delta, 1, ch.acceleration_speed, ch.top_speed)
-	apply_acceleration(delta, -1, ch.deceleration_speed, ch.top_speed)
+	apply_acceleration(delta, 1, acceleration_speed, top_speed)
+	apply_acceleration(delta, -1, deceleration_speed, top_speed)
 	if ch.get_input_left_right() == 0:
 		apply_friction(delta)
 

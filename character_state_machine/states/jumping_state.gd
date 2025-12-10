@@ -1,6 +1,9 @@
 extends FallingState
 class_name JumpingState
 
+var jump_speed := 6.5 * speed_scale
+var jump_stop_speed := 4 * speed_scale
+
 func _init(character: Character, name: String = ""):
 	super._init(character, ":Jumping" + name)
 
@@ -12,8 +15,8 @@ func _state_exit(delta: float, next_state: State) -> void:
 func _state_enter(delta: float, previous_state: State) -> void:
 	super._state_enter(delta, previous_state)
 
-	ch.velocity.x += -ch.jump_speed * sin(ch.ground_angle_rad)
-	ch.velocity.y += -ch.jump_speed * cos(ch.ground_angle_rad)
+	ch.velocity.x += -jump_speed * sin(ch.ground_angle_rad)
+	ch.velocity.y += -jump_speed * cos(ch.ground_angle_rad)
 	# This fixes a weird bug, where at certain angles is_on_floor()
 	#  still returns true the next frame after jumping...
 	ch.lock_transition_frames = 2
@@ -22,8 +25,8 @@ func _state_enter(delta: float, previous_state: State) -> void:
 func _physics_process(delta: float) -> void:
 	# Variable jump height
 	if not Input.is_action_pressed("action_primary"):
-		if ch.velocity.y < -ch.jump_stop_speed:
-			ch.velocity.y = - ch.jump_stop_speed
+		if ch.velocity.y < -jump_stop_speed:
+			ch.velocity.y = - jump_stop_speed
 
 	super._physics_process(delta)
 

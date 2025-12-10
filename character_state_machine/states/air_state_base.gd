@@ -1,6 +1,13 @@
 extends State
 class_name AirStateBase
 
+var top_speed := 6 * speed_scale
+
+var air_acceleration := 0.09375 * acceleration_scale
+
+var gravity_force := 0.21875 * acceleration_scale
+var top_falling_speed := 16 * speed_scale
+
 func _init(character: Character, name: String = ""):
 	super._init(character, "Air" + name)
 
@@ -22,9 +29,9 @@ func _physics_process(delta: float) -> void:
 	#     ch.velocity.x -= (ch.velocity.x / 256); # May need to update to use "div"?
 
 	# Apply gravity
-	ch.velocity.y += ch.gravity_force * delta
-	if ch.velocity.y > ch.top_falling_speed:
-		ch.velocity.y = ch.top_falling_speed
+	ch.velocity.y += gravity_force * delta
+	if ch.velocity.y > top_falling_speed:
+		ch.velocity.y = top_falling_speed
 	
 	# No ground angle while in air
 	ch.ground_angle = 0
