@@ -1,21 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://msx4inq8mk2e"]
+[gd_scene load_steps=5 format=3 uid="uid://msx4inq8mk2e"]
 
 [ext_resource type="PackedScene" uid="uid://b447inh2kuceg" path="res://character_state_machine/character_spring_guy/character_spring_guy.tscn" id="1_ryisk"]
 [ext_resource type="Script" uid="uid://c7bjgsb7wh8ye" path="res://debug_values.gd" id="2_4havw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4havw"]
-size = Vector2(5840, 214)
+size = Vector2(18361, 214)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chjy8"]
+size = Vector2(540, 5321)
 
 [node name="TestSpringGuy" type="Node2D"]
 
 [node name="Character" parent="." instance=ExtResource("1_ryisk")]
 position = Vector2(3056, 137)
-floor_snap_length = 20.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(2228, 473)
+position = Vector2(-4032.5, 473)
 shape = SubResource("RectangleShape2D_4havw")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
@@ -23,6 +25,17 @@ polygon = PackedVector2Array(5069, 379, 5354, 333, 5592, 210, 5691, 101, 5812, -
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="StaticBody2D"]
 polygon = PackedVector2Array(1136, 356, 1936, 177, 1999, 186, 2272, 368, 2498, 418, 916, 380)
+
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-9424, 488, -11429, -584, -11476, -348, -11608, -350, -11647, -573, -12116, -363, -12578, -350, -13029, -669, -13444, -916, -13391, 539)
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-13648, -2406.5)
+shape = SubResource("RectangleShape2D_chjy8")
+
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2(-6971, 22)
+polygon = PackedVector2Array(1136, 356, 1582.4956, 256.09656, 1936, 177, 1999, 186, 2272, 368, 2498, 418, 916, 380)
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 
