@@ -76,7 +76,7 @@ func _ready() -> void:
 	current_spring_state = state_releasing
 
 	state_falling.add_transition(state_rolling, is_on_floor)
-	# state_rolling.add_transition(state_falling, is_not_on_floor)
+	state_rolling.add_transition(state_falling, is_not_on_floor)
 
 	state_releasing.add_transition(state_charging, is_primary_action_pressed)
 	state_charging.add_transition(state_releasing, is_primary_action_released)

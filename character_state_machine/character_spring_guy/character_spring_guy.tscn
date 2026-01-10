@@ -9,10 +9,9 @@
 radius = 127.5
 
 [node name="Character" type="CharacterBody2D"]
-up_direction = Vector2(0.5496165, -0.83541715)
 floor_stop_on_slope = false
 floor_block_on_wall = false
-floor_snap_length = 20000.0
+floor_snap_length = 20.0
 script = ExtResource("1_goklj")
 
 [node name="GroundSensor1" type="RayCast2D" parent="."]
