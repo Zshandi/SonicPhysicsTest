@@ -1,7 +1,7 @@
 extends RefCounted
 class_name State
 
-var ch: Character
+var ch: CharacterBody2D
 
 var framerate := 60
 var scaling_factor := 0.8
@@ -26,7 +26,7 @@ func get_next_transition() -> StateTransition:
 			return transition
 	return null
 
-func _init(character: Character, name: String = ""):
+func _init(character: CharacterBody2D, name: String = ""):
 	ch = character
 	state_name = name
 

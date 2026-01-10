@@ -17,7 +17,6 @@ var slip_speed_reduction := 0.5 * speed_scale
 var slip_min_angle := 35
 var fall_min_angle := 69
 
-
 var GROUNDED_DEBUG := "GROUNDED"
 var SLIP_DEBUG := "SLIP"
 var JITTER_DEBUG := "JITTER"

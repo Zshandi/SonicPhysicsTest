@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3 uid="uid://msx4inq8mk2e"]
+
+[ext_resource type="PackedScene" uid="uid://b447inh2kuceg" path="res://character_state_machine/character_spring_guy/character_spring_guy.tscn" id="1_ryisk"]
+[ext_resource type="Script" uid="uid://c7bjgsb7wh8ye" path="res://debug_values.gd" id="2_4havw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4havw"]
+size = Vector2(5840, 214)
+
+[node name="TestSpringGuy" type="Node2D"]
+
+[node name="Character" parent="." instance=ExtResource("1_ryisk")]
+position = Vector2(3056, 137)
+floor_snap_length = 20.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(2228, 473)
+shape = SubResource("RectangleShape2D_4havw")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(5069, 379, 5354, 333, 5592, 210, 5691, 101, 5812, -111, 5898, -410, 5928, -789, 5918, -1087, 5837, -1421, 6358, -1441, 6509, 596, 5064, 576)
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(1136, 356, 1936, 177, 1999, 186, 2272, 368, 2498, 418, 916, 380)
+
+[node name="DebugOverlay" type="CanvasLayer" parent="."]
+
+[node name="DebugValues" type="RichTextLabel" parent="DebugOverlay"]
+visible = false
+offset_left = 17.0
+offset_top = 14.0
+offset_right = 1028.0
+offset_bottom = 566.0
+text = "Key: value
+Key: value
+Key: value
+Key: value
+Key: value"
+script = ExtResource("2_4havw")

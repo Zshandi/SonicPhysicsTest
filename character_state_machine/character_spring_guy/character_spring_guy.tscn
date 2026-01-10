@@ -1,0 +1,55 @@
+[gd_scene load_steps=6 format=3 uid="uid://b447inh2kuceg"]
+
+[ext_resource type="Script" uid="uid://5inb25bihmt8" path="res://character_state_machine/character_spring_guy/character_spring_guy.gd" id="1_goklj"]
+[ext_resource type="Script" uid="uid://b38exo7wrm7hg" path="res://sensor.gd" id="2_3forl"]
+[ext_resource type="Texture2D" uid="uid://bbcjfvop5pjdf" path="res://assets/spring_guy_head.png" id="3_goklj"]
+[ext_resource type="Texture2D" uid="uid://upx7atymhcx7" path="res://assets/spring_guy_wheel.png" id="4_lynb7"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lynb7"]
+radius = 127.5
+
+[node name="Character" type="CharacterBody2D"]
+up_direction = Vector2(0.5496165, -0.83541715)
+floor_stop_on_slope = false
+floor_block_on_wall = false
+floor_snap_length = 20000.0
+script = ExtResource("1_goklj")
+
+[node name="GroundSensor1" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(13, 13)
+target_position = Vector2(0, 15)
+script = ExtResource("2_3forl")
+
+[node name="GroundSensor2" type="RayCast2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-13, 13)
+target_position = Vector2(0, 15)
+script = ExtResource("2_3forl")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lynb7")
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="HeadRotation" type="Node2D" parent="Sprites"]
+unique_name_in_owner = true
+
+[node name="HeadSprite" type="Sprite2D" parent="Sprites/HeadRotation"]
+unique_name_in_owner = true
+position = Vector2(0, -190)
+texture = ExtResource("3_goklj")
+
+[node name="HeadMinPosition" type="Marker2D" parent="Sprites/HeadRotation"]
+unique_name_in_owner = true
+position = Vector2(0, -190)
+
+[node name="HeadMaxPosition" type="Marker2D" parent="Sprites/HeadRotation"]
+unique_name_in_owner = true
+position = Vector2(0, -64)
+
+[node name="WheelSprite" type="Sprite2D" parent="Sprites"]
+unique_name_in_owner = true
+texture = ExtResource("4_lynb7")
