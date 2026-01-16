@@ -7,6 +7,8 @@ var scaling_factor := 0.8
 var speed_scale := framerate * scaling_factor
 var acceleration_scale := framerate * framerate * scaling_factor
 
+const down_collision_test_distance := 10
+
 # Node variables
 
 @onready
@@ -51,6 +53,8 @@ var facing_dir_scale := 1.0:
 
 var sprite_facing_dir: int = 1
 
+var floor_frames := 0
+
 # Wheel angle in radians
 var wheel_angle: float = 0
 
@@ -75,29 +79,50 @@ func _ready() -> void:
 	current_state = state_falling
 	current_spring_state = state_releasing
 
-	state_falling.add_transition(state_rolling, is_on_floor)
-	state_rolling.add_transition(state_falling, is_not_on_floor)
+	state_falling.add_transition(state_rolling, is_on_floor_recently)
+	state_rolling.add_transition(state_falling, is_not_on_floor_recently)
 
 	state_releasing.add_transition(state_charging, is_primary_action_pressed)
 	state_charging.add_transition(state_releasing, is_primary_action_released)
 
-func update_ground_angle() -> void:
-	var normal_average: Vector2 = Vector2.ZERO
+func calculate_ground_angle() -> float:
+	var normal_total := Vector2.ZERO
+	var collision: KinematicCollision2D = null
+	if get_slide_collision_count() > 0:
+		collision = get_slide_collision(get_slide_collision_count() - 1)
+		normal_total += collision.get_normal()
+	else:
+		# With the snap downward, we don't get a slide collision, so test moving in current down direction
+		collision = move_and_collide(-up_direction * down_collision_test_distance, true)
+		if collision != null:
+			normal_total += collision.get_normal()
+	
+	if %GroundSensor1.is_colliding():
+		normal_total += %GroundSensor1.get_collision_normal()
+	if %GroundSensor2.is_colliding():
+		normal_total += %GroundSensor2.get_collision_normal()
 
-	for i in range(get_slide_collision_count()):
-		var collision := get_slide_collision(i)
-		normal_average += collision.get_normal()
+	if normal_total != Vector2.ZERO:
+		return Vector2.UP.angle_to(normal_total)
 	
-	if normal_average != Vector2.ZERO:
-		ground_angle = Vector2.UP.angle_to(normal_average)
-	# else:
-	# 	ground_angle = 0
+	elif not is_on_floor_recently():
+		return 0
 	
-	# up_direction = Vector2.UP.rotated(ground_angle)
+	else: return ground_angle
+
+func update_ground_angle() -> void:
+	ground_angle = calculate_ground_angle()
+
+	%Sensors.rotation = ground_angle
+
+	up_direction = Vector2.UP.rotated(ground_angle)
+	
 	DebugValues.debug("ground_angle", ground_angle)
 	DebugValues.debug("up_direction", up_direction)
 
-func is_not_on_floor(): return not is_on_floor()
+func is_not_on_floor_recently(): return not is_on_floor_recently()
+
+func is_on_floor_recently(): return floor_frames > 0
 
 func is_primary_action_pressed() -> bool:
 	return Input.is_action_just_pressed("action_primary")
@@ -113,6 +138,7 @@ func get_input_left_right() -> float:
 
 func _physics_process(delta: float) -> void:
 	update_ground_angle()
+	manual_snap()
 
 	current_state = transition_to_next_state(current_state, delta)
 	current_state._physics_process(delta)
@@ -120,8 +146,20 @@ func _physics_process(delta: float) -> void:
 	current_spring_state = transition_to_next_state(current_spring_state, delta)
 	current_spring_state._physics_process(delta)
 	#update_rotation_for_ground_angle()
+
+	if is_on_floor():
+		floor_frames = 7
+	else:
+		floor_frames -= 1
+	
 	move_and_slide()
 	wheel_angle += wheel_rotation_speed * delta
+
+
+func manual_snap() -> void:
+	var test := move_and_collide(-up_direction * floor_snap_length, true)
+	if test != null:
+		move_and_collide(-up_direction * floor_snap_length)
 
 func _process(delta: float) -> void:
 	current_state._process(delta)

@@ -139,7 +139,7 @@ func reduce_ground_angle_jitter():
 	var current_angle_change: float = prev_ground_angle_normals[-1].angle_to(prev_ground_angle_normals[ - 2])
 	var prev_angle_change: float = prev_ground_angle_normals[-2].angle_to(prev_ground_angle_normals[ - 3])
 	
-	var current_angle := ch.ground_angle
+	var current_angle = ch.ground_angle
 	DebugValues.debug("current_angle_change", current_angle_change, JITTER_DEBUG)
 	DebugValues.debug("prev_angle_change", prev_angle_change, JITTER_DEBUG)
 	DebugValues.debug("unchanged ground_angle", current_angle, JITTER_DEBUG)

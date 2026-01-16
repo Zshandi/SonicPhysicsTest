@@ -13,6 +13,7 @@ size = Vector2(540, 5321)
 
 [node name="Character" parent="." instance=ExtResource("1_ryisk")]
 position = Vector2(3056, 137)
+floor_snap_length = 0.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 

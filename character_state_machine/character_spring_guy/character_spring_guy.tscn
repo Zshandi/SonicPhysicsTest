@@ -11,20 +11,8 @@ radius = 127.5
 [node name="Character" type="CharacterBody2D"]
 floor_stop_on_slope = false
 floor_block_on_wall = false
-floor_snap_length = 20.0
+floor_snap_length = 300.0
 script = ExtResource("1_goklj")
-
-[node name="GroundSensor1" type="RayCast2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(13, 13)
-target_position = Vector2(0, 15)
-script = ExtResource("2_3forl")
-
-[node name="GroundSensor2" type="RayCast2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(-13, 13)
-target_position = Vector2(0, 15)
-script = ExtResource("2_3forl")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
@@ -52,3 +40,18 @@ position = Vector2(0, -64)
 [node name="WheelSprite" type="Sprite2D" parent="Sprites"]
 unique_name_in_owner = true
 texture = ExtResource("4_lynb7")
+
+[node name="Sensors" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="GroundSensor1" type="RayCast2D" parent="Sensors"]
+unique_name_in_owner = true
+position = Vector2(33, 124)
+target_position = Vector2(0, 100)
+script = ExtResource("2_3forl")
+
+[node name="GroundSensor2" type="RayCast2D" parent="Sensors"]
+unique_name_in_owner = true
+position = Vector2(-33, 124)
+target_position = Vector2(0, 100)
+script = ExtResource("2_3forl")
