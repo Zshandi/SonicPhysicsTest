@@ -138,7 +138,6 @@ func get_input_left_right() -> float:
 
 func _physics_process(delta: float) -> void:
 	update_ground_angle()
-	manual_snap()
 
 	current_state = transition_to_next_state(current_state, delta)
 	current_state._physics_process(delta)
@@ -148,18 +147,12 @@ func _physics_process(delta: float) -> void:
 	#update_rotation_for_ground_angle()
 
 	if is_on_floor():
-		floor_frames = 7
+		floor_frames = 3
 	else:
 		floor_frames -= 1
 	
 	move_and_slide()
 	wheel_angle += wheel_rotation_speed * delta
-
-
-func manual_snap() -> void:
-	var test := move_and_collide(-up_direction * floor_snap_length, true)
-	if test != null:
-		move_and_collide(-up_direction * floor_snap_length)
 
 func _process(delta: float) -> void:
 	current_state._process(delta)

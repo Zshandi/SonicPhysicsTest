@@ -13,7 +13,6 @@ size = Vector2(540, 5321)
 
 [node name="Character" parent="." instance=ExtResource("1_ryisk")]
 position = Vector2(3056, 137)
-floor_snap_length = 0.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
@@ -22,7 +21,7 @@ position = Vector2(-4032.5, 473)
 shape = SubResource("RectangleShape2D_4havw")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
-polygon = PackedVector2Array(5069, 379, 5354, 333, 5592, 210, 5691, 101, 5812, -111, 5898, -410, 5928, -789, 5918, -1087, 5837, -1421, 6358, -1441, 6509, 596, 5064, 576)
+polygon = PackedVector2Array(5069, 379, 5354, 333, 5592, 210, 5691, 101, 5812, -111, 5898, -410, 5928, -789, 5918, -1087, 5905, -1439, 6358, -1441, 6509, 596, 5064, 576)
 
 [node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="StaticBody2D"]
 polygon = PackedVector2Array(1136, 356, 1936, 177, 1999, 186, 2272, 368, 2498, 418, 916, 380)
@@ -37,6 +36,9 @@ shape = SubResource("RectangleShape2D_chjy8")
 [node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="StaticBody2D"]
 position = Vector2(-6971, 22)
 polygon = PackedVector2Array(1136, 356, 1582.4956, 256.09656, 1936, 177, 1999, 186, 2272, 368, 2498, 418, 916, 380)
+
+[node name="CollisionPolygon2D5" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(6128, -504, 5935, -508, 5910, -801, 5873, -1022, 5789, -1210, 5626, -1398, 5388, -1494, 5125, -1544, 4774, -1553, 4185, -1553, 3930, -1557, 3701, -1590, 3521, -1653, 3383, -1753, 3216, -1958, 3107, -2267, 3045, -2572, 3028, -2785, 3053, -2998, 3199, -3249, 3375, -3432, 3646, -3549, 4010, -3595, 4436, -3579, 4908, -3491, 5664, -3278, 5948, -3136, 6286, -2760, 6382, -1482, 6349, -759)
 
 [node name="DebugOverlay" type="CanvasLayer" parent="."]
 
