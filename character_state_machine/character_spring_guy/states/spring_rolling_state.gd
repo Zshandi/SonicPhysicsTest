@@ -7,6 +7,8 @@ var friction := 0.15 * acceleration_scale
 
 # Turn rate in radians per second
 var head_turn_speed := deg_to_rad(70)
+# Angle correction rate in radians per second
+var head_correction_speed := deg_to_rad(200)
 # Max head turn in radians
 var head_turn_max := deg_to_rad(70)
 
@@ -14,6 +16,8 @@ var head_turn_max := deg_to_rad(70)
 var spring_char: CharacterSpringGuy
 
 var wheel_radius: float = 127.5
+
+var relative_head_angle: float = 0
 
 # Called when the state is about to transition to another state
 func _state_exit(_delta: float, _next_state: State) -> void:
@@ -24,9 +28,7 @@ func _init(character: CharacterBody2D, name: String = ""):
 	super._init(character, name)
 	spring_char = character
 
-# Called when the state is transitioned to from another state
-func _state_enter(_delta: float, _previous_state: State) -> void:
-	# Calculate the ground speed
+func update_ground_speed() -> void:
 	# Linear speed based on velocity that aligns with the ground angle
 	var ground_right_dir := Vector2.RIGHT.rotated(spring_char.ground_angle)
 	var linear_ground_speed := spring_char.velocity.dot(ground_right_dir)
@@ -49,6 +51,17 @@ func _state_enter(_delta: float, _previous_state: State) -> void:
 			# Otherwise they cancel each other out to some extent
 			spring_char.ground_speed = linear_ground_speed + angular_ground_speed
 
+func get_current_relative_head_angle() -> float:
+	return spring_char.up_direction.angle_to(Vector2.UP.rotated(spring_char.head_angle))
+
+func update_relative_head_angle() -> void:
+	relative_head_angle = get_current_relative_head_angle()
+
+# Called when the state is transitioned to from another state
+func _state_enter(_delta: float, _previous_state: State) -> void:
+	update_ground_speed()
+	update_relative_head_angle()
+
 # Called every frame after the state has been transitioned
 func _physics_process(delta: float) -> void:
 	var dir := spring_char.get_input_left_right()
@@ -65,13 +78,20 @@ func _physics_process(delta: float) -> void:
 	
 	spring_char.velocity = right_vector * spring_char.ground_speed - spring_char.up_direction
 
-	var relative_head_angle := spring_char.up_direction.angle_to(Vector2.UP.rotated(spring_char.head_angle))
-
 	relative_head_angle = move_toward(relative_head_angle, head_turn_max * sign(dir), head_turn_speed * delta)
 
-	spring_char.head_angle = Vector2.UP.angle_to(spring_char.up_direction.rotated(relative_head_angle))
-
+	move_head_toward_target(delta)
+	
 	spring_char.wheel_rotation_speed = spring_char.ground_speed / (wheel_radius)
+
+func move_head_toward_target(delta: float) -> void:
+	var head_vector = Vector2.UP.rotated(spring_char.head_angle)
+
+	var target_head_vector = spring_char.up_direction.rotated(relative_head_angle)
+
+	var difference = head_vector.angle_to(target_head_vector)
+
+	spring_char.head_angle = move_toward(spring_char.head_angle, spring_char.head_angle + difference, head_correction_speed * delta)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
