@@ -65,10 +65,38 @@ func _physics_process(delta: float) -> void:
 	
 	spring_char.velocity = right_vector * spring_char.ground_speed - spring_char.up_direction
 	
-	spring_char.head_angle = move_toward(spring_char.head_angle, head_turn_max * sign(dir), head_turn_speed * delta)
+	spring_char.head_angle = move_toward_modular(spring_char.head_angle, head_turn_max * sign(dir) + spring_char.ground_angle, head_turn_speed * delta, 360)
 
 	spring_char.wheel_rotation_speed = spring_char.ground_speed / (wheel_radius)
 
+func fmod_pos(x: float, y: float) -> float:
+	x = fmod(x, y)
+	if x < 0:
+		x += abs(y)
+	return x
+
+func move_toward_modular(current: float, target: float, amount: float, mod_value: float) -> float:
+	mod_value = abs(mod_value)
+	amount = abs(amount)
+
+	target = fmod_pos(target, mod_value)
+	current = fmod_pos(current, mod_value)
+
+	if current == target: return current
+
+	if abs(target - current) <= (mod_value / 2):
+		# Moving within the bounds of the mod
+		DebugValues.debug("mod_type", "within")
+		return move_toward(current, target, amount)
+	else:
+		# Wrapping around the outside of the mod
+		DebugValues.debug("mod_type", "wrap")
+		if current < target:
+			target -= mod_value
+		else:
+			target += mod_value
+		
+		return fmod_pos(move_toward(current, target, amount), mod_value)
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(_delta: float) -> void:
