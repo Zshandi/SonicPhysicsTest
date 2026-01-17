@@ -8,12 +8,13 @@ var jump_power: float = 0
 
 var jump_speed: float = 26 * speed_scale
 
-var sprung := true
+var sprung := false
 
 # Called when the state is about to transition to another state
 func _state_exit(delta: float, next_state: State) -> void:
 	super._state_exit(delta, next_state)
 	spring_char.head_sprite.position = spring_char.head_min_position
+	sprung = false
 
 # Called when the state is transitioned to from another state
 func _state_enter(_delta: float, _previous_state: State) -> void:
@@ -43,7 +44,12 @@ func apply_jump() -> void:
 	var direction := Vector2.UP.rotated(current_angle)
 	var jump_impulse := direction * jump_speed
 
-	spring_char.velocity += jump_impulse * jump_power
+	var jump_velocity := jump_impulse * jump_power
+	if jump_velocity.dot(spring_char.velocity):
+		spring_char.velocity += jump_velocity
+	else:
+		var perpendicular_velocity = spring_char.velocity.project(jump_velocity.rotated(PI / 2))
+		spring_char.velocity = jump_velocity + perpendicular_velocity
 
 # Called for the current state when rendering (i.e. just called from _process)
 func _process(delta: float) -> void:

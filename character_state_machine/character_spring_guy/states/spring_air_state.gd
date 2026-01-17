@@ -4,9 +4,7 @@ class_name SpringAirState
 var spring_char: CharacterSpringGuy
 
 # Turn rate in radians per second
-var head_turn_speed := deg_to_rad(50)
-# Max head turn in radians
-var head_turn_max := deg_to_rad(70)
+var head_turn_speed := deg_to_rad(150)
 
 # Called when the state is about to transition to another state
 func _state_exit(_delta: float, _next_state: State) -> void:
@@ -28,7 +26,7 @@ func _physics_process(delta: float) -> void:
 	if dir != 0:
 		spring_char.sprite_facing_dir = sign(dir)
 
-	spring_char.head_angle = move_toward(spring_char.head_angle, head_turn_max * sign(dir), head_turn_speed * delta)
+	spring_char.head_angle += sign(dir) * head_turn_speed * delta
 	
 	ch.velocity += ch.get_gravity() * delta
 	

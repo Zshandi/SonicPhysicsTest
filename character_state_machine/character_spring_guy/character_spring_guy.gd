@@ -72,18 +72,24 @@ var state_rolling := SpringRollingState.new(self, "Rolling")
 var state_falling := SpringAirState.new(self, "Air")
 
 # Spring states
+var state_idle := State.new(self, "Idle")
 var state_charging := SpringChargingState.new(self, "Charging")
 var state_releasing := SpringReleasingState.new(self, "Releasing")
 
 func _ready() -> void:
 	current_state = state_falling
-	current_spring_state = state_releasing
+	current_spring_state = state_idle
 
-	state_falling.add_transition(state_rolling, is_on_floor_recently)
+	state_falling.add_transition(state_rolling, is_on_floor)
 	state_rolling.add_transition(state_falling, is_not_on_floor_recently)
+	state_rolling.add_transition(state_falling, is_spring_sprung)
 
-	state_releasing.add_transition(state_charging, is_primary_action_pressed)
+	state_idle.add_transition(state_charging, is_primary_action_pressed)
 	state_charging.add_transition(state_releasing, is_primary_action_released)
+	state_releasing.add_transition(state_idle, is_spring_sprung)
+
+func is_spring_sprung() -> bool:
+	return current_spring_state == state_releasing and state_releasing.sprung
 
 func calculate_ground_angle() -> float:
 	var normal_total := Vector2.ZERO
@@ -139,12 +145,11 @@ func get_input_left_right() -> float:
 func _physics_process(delta: float) -> void:
 	update_ground_angle()
 
-	current_state = transition_to_next_state(current_state, delta)
 	current_state._physics_process(delta)
-
-	current_spring_state = transition_to_next_state(current_spring_state, delta)
 	current_spring_state._physics_process(delta)
-	#update_rotation_for_ground_angle()
+
+	current_state = transition_to_next_state(current_state, delta)
+	current_spring_state = transition_to_next_state(current_spring_state, delta)
 
 	if is_on_floor():
 		floor_frames = 3
