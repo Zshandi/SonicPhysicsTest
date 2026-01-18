@@ -56,6 +56,7 @@ func get_current_relative_head_angle() -> float:
 
 func update_relative_head_angle() -> void:
 	relative_head_angle = get_current_relative_head_angle()
+	relative_head_angle = clampf(relative_head_angle, -head_turn_max, head_turn_max)
 
 # Called when the state is transitioned to from another state
 func _state_enter(_delta: float, _previous_state: State) -> void:
