@@ -77,6 +77,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		spring_char.ground_speed = move_toward(spring_char.ground_speed, 0, friction * delta)
 	
+	DebugValues.debug("ground_speed", spring_char.ground_speed)
 	spring_char.velocity = right_vector * spring_char.ground_speed - spring_char.up_direction
 
 	relative_head_angle = move_toward(relative_head_angle, head_turn_max * sign(dir), head_turn_speed * delta)

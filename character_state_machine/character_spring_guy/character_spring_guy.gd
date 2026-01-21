@@ -33,6 +33,8 @@ var velocity_2D: Vector2:
 
 var ground_speed := 0.0
 
+var ground_angle_averager: AverageValueTracker = AverageValueTracker.new(10, PI / 4)
+
 var ground_angle := 0.0:
 	set(value):
 		# Ensure it's always between 0 and 2*PI, without changing the angle
@@ -92,6 +94,15 @@ func is_spring_sprung() -> bool:
 	return current_spring_state == state_releasing and state_releasing.sprung
 
 func calculate_ground_angle() -> float:
+	if abs(ground_speed) < 100:
+		ground_angle_averager.set_num_to_track(60)
+	elif abs(ground_speed) < 500:
+		ground_angle_averager.set_num_to_track(10)
+	elif abs(ground_speed) < 1500:
+		ground_angle_averager.set_num_to_track(6)
+	else:
+		ground_angle_averager.set_num_to_track(4)
+
 	var normal_total := Vector2.ZERO
 	var collision: KinematicCollision2D = null
 	if get_slide_collision_count() > 0:
@@ -109,12 +120,12 @@ func calculate_ground_angle() -> float:
 		normal_total += %GroundSensor2.get_collision_normal()
 
 	if normal_total != Vector2.ZERO:
-		return Vector2.UP.angle_to(normal_total)
+		ground_angle_averager.process_value(normal_total.normalized())
 	
 	elif not is_on_floor_recently():
-		return 0
+		ground_angle_averager.reset()
 	
-	else: return ground_angle
+	return ground_angle_averager.get_average_angle()
 
 func update_ground_angle() -> void:
 	ground_angle = calculate_ground_angle()
