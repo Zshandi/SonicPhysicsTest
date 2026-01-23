@@ -1,9 +1,37 @@
-[gd_scene load_steps=6 format=3 uid="uid://b447inh2kuceg"]
+[gd_scene load_steps=18 format=3 uid="uid://b447inh2kuceg"]
 
 [ext_resource type="Script" uid="uid://5inb25bihmt8" path="res://character_state_machine/character_spring_guy/character_spring_guy.gd" id="1_goklj"]
+[ext_resource type="AudioStream" uid="uid://1mqwafdtwhou" path="res://assets/sfx/EFX INT Goofy Spring Bounces 04 - Boing1.wav" id="2_2vxrk"]
 [ext_resource type="Script" uid="uid://b38exo7wrm7hg" path="res://sensor.gd" id="2_3forl"]
+[ext_resource type="AudioStream" uid="uid://e0tmsm60pc1x" path="res://assets/sfx/EFX INT Goofy Spring Bounces 04 - Boing2.wav" id="3_56hjj"]
 [ext_resource type="Texture2D" uid="uid://bbcjfvop5pjdf" path="res://assets/spring_guy_head.png" id="3_goklj"]
+[ext_resource type="Script" uid="uid://dnx5pn5bhlncr" path="res://character_state_machine/character_spring_guy/rolling_sound_player.gd" id="3_xvjpd"]
 [ext_resource type="Texture2D" uid="uid://upx7atymhcx7" path="res://assets/spring_guy_wheel.png" id="4_lynb7"]
+[ext_resource type="AudioStream" uid="uid://bx8v1xn1qf2wh" path="res://assets/sfx/EFX INT Goofy Spring Bounces 04 - Boing3.wav" id="4_xvjpd"]
+[ext_resource type="Script" uid="uid://i0hpgycr27w6" path="res://utility/input_min_max.gd" id="5_56hjj"]
+[ext_resource type="AudioStream" uid="uid://dxhfio8sciu0p" path="res://assets/sfx/EMOTE David, Man, Anger Fight Grunt Special Power 03 - Faster.wav" id="5_ic2g4"]
+[ext_resource type="AudioStream" uid="uid://bhqc6t0gbchmt" path="res://assets/sfx/Rotation,Metal,Shallow,Roll,Rattle,Loose,Churning,Steady,Loop.wav" id="6_s3bxu"]
+[ext_resource type="Script" uid="uid://bwpfhs6qr6b82" path="res://utility/randomized_sound_player.gd" id="7_5uiya"]
+
+[sub_resource type="Resource" id="Resource_xvjpd"]
+script = ExtResource("5_56hjj")
+min_value = 0.7
+max_value = 1.3
+metadata/_custom_type_script = "uid://i0hpgycr27w6"
+
+[sub_resource type="Resource" id="Resource_ic2g4"]
+script = ExtResource("5_56hjj")
+min_value = 0.95
+max_value = 1.05
+metadata/_custom_type_script = "uid://i0hpgycr27w6"
+
+[sub_resource type="Resource" id="Resource_56hjj"]
+script = ExtResource("5_56hjj")
+min_value = 0.95
+max_value = 1.05
+
+[sub_resource type="Resource" id="Resource_s3bxu"]
+script = ExtResource("5_56hjj")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lynb7"]
 radius = 127.5
@@ -13,6 +41,40 @@ floor_stop_on_slope = false
 floor_block_on_wall = false
 floor_snap_length = 300.0
 script = ExtResource("1_goklj")
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="RollingSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
+unique_name_in_owner = true
+stream = ExtResource("6_s3bxu")
+script = ExtResource("3_xvjpd")
+
+[node name="BoingSoundPlayer" type="Node" parent="Sounds" node_paths=PackedStringArray("sound_selection")]
+unique_name_in_owner = true
+script = ExtResource("7_5uiya")
+sound_selection = [NodePath("Boing1"), NodePath("Boing2"), NodePath("Boing3")]
+pitch_variation = SubResource("Resource_xvjpd")
+volume_linear_variation = SubResource("Resource_ic2g4")
+
+[node name="Boing1" type="AudioStreamPlayer" parent="Sounds/BoingSoundPlayer"]
+stream = ExtResource("2_2vxrk")
+
+[node name="Boing2" type="AudioStreamPlayer" parent="Sounds/BoingSoundPlayer"]
+stream = ExtResource("3_56hjj")
+
+[node name="Boing3" type="AudioStreamPlayer" parent="Sounds/BoingSoundPlayer"]
+stream = ExtResource("4_xvjpd")
+
+[node name="ChargingSoundPlayer" type="Node" parent="Sounds" node_paths=PackedStringArray("sound_selection")]
+unique_name_in_owner = true
+script = ExtResource("7_5uiya")
+sound_selection = [NodePath("Charging")]
+pitch_variation = SubResource("Resource_56hjj")
+volume_linear_variation = SubResource("Resource_s3bxu")
+metadata/_custom_type_script = "uid://bwpfhs6qr6b82"
+
+[node name="Charging" type="AudioStreamPlayer" parent="Sounds/ChargingSoundPlayer"]
+stream = ExtResource("5_ic2g4")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

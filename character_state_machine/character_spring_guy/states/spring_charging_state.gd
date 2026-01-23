@@ -19,6 +19,7 @@ func _state_exit(delta: float, next_state: State) -> void:
 # Called when the state is transitioned to from another state
 func _state_enter(delta: float, previous_state: State) -> void:
 	super._state_enter(delta, previous_state)
+	spring_char.charging_sound_player.play()
 	current_progression = 0
 
 

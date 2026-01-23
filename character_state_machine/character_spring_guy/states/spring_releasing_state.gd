@@ -35,7 +35,8 @@ func _physics_process(delta: float) -> void:
 	if current_progression <= 0:
 		current_progression = 0
 		spring_char.head_sprite.position = spring_char.head_min_position
-
+		
+		spring_char.boing_sound_player.play()
 		apply_jump()
 		sprung = true
 	

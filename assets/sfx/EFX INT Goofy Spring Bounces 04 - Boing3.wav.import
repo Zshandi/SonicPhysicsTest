@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bx8v1xn1qf2wh"
+path="res://.godot/imported/EFX INT Goofy Spring Bounces 04 - Boing3.wav-3a0d78dd4833e90b5ac3068e8ba9902d.sample"
+
+[deps]
+
+source_file="res://assets/sfx/EFX INT Goofy Spring Bounces 04 - Boing3.wav"
+dest_files=["res://.godot/imported/EFX INT Goofy Spring Bounces 04 - Boing3.wav-3a0d78dd4833e90b5ac3068e8ba9902d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

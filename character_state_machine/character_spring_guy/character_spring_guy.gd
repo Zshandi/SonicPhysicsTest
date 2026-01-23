@@ -21,6 +21,10 @@ var head_rotation_node: Node2D = %HeadRotation
 var head_min_position: Vector2 = %HeadMinPosition.position
 @onready
 var head_max_position: Vector2 = %HeadMaxPosition.position
+@onready
+var boing_sound_player: RandomizedSoundPlayer = %BoingSoundPlayer
+@onready
+var charging_sound_player: RandomizedSoundPlayer = %ChargingSoundPlayer
 
 # State variables
 
