@@ -183,6 +183,8 @@ func _process(delta: float) -> void:
 
 	head_sprite.scale.x = sprite_facing_dir
 	wheel_sprite.scale.x = sprite_facing_dir
+
+	%RollingSoundPlayer.process_wheel_speed(abs(wheel_rotation_speed))
 	
 	if Input.is_key_pressed(KEY_R):
 		get_tree().reload_current_scene()
